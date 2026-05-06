@@ -1,15 +1,16 @@
-import { mockUser } from '../data/mockData';
 import { User, Bell, Shield, Palette, ChevronRight } from 'lucide-react';
+
+const user = { name: '', email: '', goal: '', dailyCalories: 2000 };
 
 const sections = [
   {
     title: 'Profile',
     icon: User,
     fields: [
-      { label: 'Full Name', value: mockUser.name, type: 'text' },
-      { label: 'Email', value: mockUser.email, type: 'email' },
-      { label: 'Health Goal', value: mockUser.goal, type: 'select', options: ['Weight Loss', 'Muscle Gain', 'Maintenance', 'Endurance'] },
-      { label: 'Daily Calorie Target', value: String(mockUser.dailyCalories), type: 'number' },
+      { label: 'Full Name', value: user.name, type: 'text' },
+      { label: 'Email', value: user.email, type: 'email' },
+      { label: 'Health Goal', value: user.goal, type: 'select', options: ['Weight Loss', 'Muscle Gain', 'Maintenance', 'Endurance'] },
+      { label: 'Daily Calorie Target', value: String(user.dailyCalories), type: 'number' },
     ],
   },
   {

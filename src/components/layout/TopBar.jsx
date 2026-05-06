@@ -1,6 +1,7 @@
 import { Bell, Search, Calendar } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuthStore } from '../../stores/authStore';
 
 const titles = {
   '/': 'Dashboard',
@@ -14,6 +15,7 @@ const titles = {
 export default function TopBar() {
   const { pathname } = useLocation();
   const title = titles[pathname] ?? 'NutriPlan';
+  const user = useAuthStore((state) => state.user);
 
   return (
     <header className="sticky top-0 z-10 bg-white/70 backdrop-blur-md border-b border-[#becab9]/50 px-6 py-4 flex items-center gap-6">
@@ -56,11 +58,11 @@ export default function TopBar() {
         {/* User profile button */}
         <button className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl bg-white border border-[#becab9]/30 hover:shadow-md transition-all group active:scale-95">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#006e1c] to-[#4caf50] flex items-center justify-center text-white text-xs font-bold shadow-sm">
-            AJ
+            {user?.username ? user.username.slice(0, 2).toUpperCase() : 'GU'}
           </div>
           <div className="text-left hidden sm:block">
-            <p className="text-[11px] font-bold text-[#171d16] leading-none">Alex J.</p>
-            <p className="text-[9px] font-bold text-[#006e1c] uppercase tracking-tighter">Pro Plan</p>
+            <p className="text-[11px] font-bold text-[#171d16] leading-none">{user?.username || 'Guest'}</p>
+            <p className="text-[9px] font-bold text-[#006e1c] uppercase tracking-tighter">{user?.role === 'admin' ? 'Admin' : 'Pro Plan'}</p>
           </div>
         </button>
       </div>

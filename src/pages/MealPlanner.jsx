@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { useApp } from '../context/AppContext';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const mealSlots = ['Breakfast', 'Lunch', 'Dinner'];
 const mealEmojis = { Breakfast: '🌅', Lunch: '☀️', Dinner: '🌙' };
+const recipes = []; // TODO: fetch from API in Phase 3
+const weekPlan = {}; // TODO: fetch from API in Phase 4
 
 export default function MealPlanner() {
-  const { recipes, weekPlan, addToPlan } = useApp();
   const [weekOffset, setWeekOffset] = useState(0);
   const [activeSlot, setActiveSlot] = useState(null); // { day, si }
-  
+  const [, setPlan] = useState(weekPlan);
+
   const todayName = days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
 
   const getWeekLabel = () => {
@@ -25,7 +26,12 @@ export default function MealPlanner() {
   };
 
   const handleAddMeal = (day, si, recipeName) => {
-    addToPlan(day, recipeName, si);
+    setPlan((prev) => {
+      const next = { ...prev };
+      if (!next[day]) next[day] = [null, null, null];
+      next[day][si] = recipeName;
+      return next;
+    });
     setActiveSlot(null);
   };
 
@@ -99,6 +105,14 @@ export default function MealPlanner() {
                 {days.map((day) => {
                   const meals = weekPlan[day] ?? [null, null, null];
                   const meal = meals[si];
+                  const handleRemove = () => {
+                    setPlan((prev) => {
+                      const next = { ...prev };
+                      if (!next[day]) next[day] = [null, null, null];
+                      next[day][si] = null;
+                      return next;
+                    });
+                  };
                   const isToday = day === todayName && weekOffset === 0;
                   const isActive = activeSlot?.day === day && activeSlot?.si === si;
 
@@ -113,8 +127,8 @@ export default function MealPlanner() {
                           className="bg-[#eaf0e4] border border-[#becab9] rounded-xl px-3 py-3 cursor-pointer transition-all shadow-sm hover:shadow-md relative overflow-hidden"
                         >
                           <p className="text-[10px] font-bold text-[#006e1c] leading-tight text-left">{meal}</p>
-                          <button 
-                            onClick={() => addToPlan(day, null, si)}
+                          <button
+                            onClick={handleRemove}
                             className="absolute -top-1 -right-1 p-1 bg-white rounded-full border border-[#becab9] opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             <X size={10} className="text-[#ba1a1a]" />

@@ -1,32 +1,22 @@
 import { useState } from 'react';
 import { X, Search, Utensils, Zap, Flame, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useApp } from '../../context/AppContext';
 import Chip from './Chip';
 
-export default function LogMealModal({ isOpen, onClose }) {
-  const { recipes, addMeal } = useApp();
+export default function LogMealModal({ isOpen, onClose, recipes = [] }) {
   const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState('Breakfast');
-  const [step, setStep] = useState(1); // 1: Select type/search, 2: Select recipe
+  const [step, setStep] = useState(1);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  const filteredRecipes = recipes.filter(r => 
+  const filteredRecipes = recipes.filter(r =>
     r.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleLog = () => {
     if (selectedRecipe) {
-      addMeal(selectedType, {
-        name: selectedRecipe.name,
-        calories: selectedRecipe.calories,
-        protein: selectedRecipe.protein,
-        carbs: selectedRecipe.carbs,
-        fat: selectedRecipe.fat,
-        tags: selectedRecipe.tags,
-      });
+      // TODO: integrate with API in Phase 4
       onClose();
-      // Reset state
       setStep(1);
       setSelectedRecipe(null);
       setSearch('');
