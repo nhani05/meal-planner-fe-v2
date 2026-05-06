@@ -3,7 +3,8 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, UtensilsCrossed, CalendarDays,
   BookOpen, BarChart3, Settings, Menu, X, Leaf,
-  ChevronLeft, ChevronRight, LogOut, ShieldCheck
+  ChevronLeft, ChevronRight, LogOut, ShieldCheck,
+  FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
@@ -13,6 +14,7 @@ const navItems = [
   { path: '/meals', label: 'Today\'s Meals', icon: UtensilsCrossed },
   { path: '/planner', label: 'Meal Planner', icon: CalendarDays },
   { path: '/recipes', label: 'Recipes', icon: BookOpen },
+  { path: '/templates', label: 'Templates', icon: FileText },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
