@@ -92,6 +92,7 @@ export default function AdminUsers() {
           <option value="">All statuses</option>
           <option value="active">Active</option>
           <option value="locked">Locked</option>
+          <option value="deleted">Deleted</option>
         </select>
       </div>
 
@@ -130,6 +131,8 @@ export default function AdminUsers() {
                         <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md ${
                           u.status === 'active'
                             ? 'bg-[#eaf0e4] text-[#006e1c]'
+                            : u.status === 'deleted'
+                            ? 'bg-[#becab9] text-[#171d16]'
                             : 'bg-[#ffdad6] text-[#ba1a1a]'
                         }`}>
                           {u.status}
@@ -137,30 +140,32 @@ export default function AdminUsers() {
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {u.status === 'active' ? (
-                            <button
-                              onClick={() => handleLock(u.id, true)}
-                              disabled={actionId === u.id}
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors"
-                              title="Lock"
-                            >
-                              {actionId === u.id ? <Loader2 size={14} className="animate-spin" /> : <Lock size={14} />}
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleLock(u.id, false)}
-                              disabled={actionId === u.id}
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#006e1c] hover:bg-[#eaf0e4] transition-colors"
-                              title="Unlock"
-                            >
-                              {actionId === u.id ? <Loader2 size={14} className="animate-spin" /> : <Unlock size={14} />}
-                            </button>
+                          {u.status !== 'deleted' && (
+                            u.status === 'active' ? (
+                              <button
+                                onClick={() => handleLock(u.id, true)}
+                                disabled={actionId === u.id}
+                                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors"
+                                title="Lock"
+                              >
+                                {actionId === u.id ? <Loader2 size={14} className="animate-spin" /> : <Lock size={14} />}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleLock(u.id, false)}
+                                disabled={actionId === u.id}
+                                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#006e1c] hover:bg-[#eaf0e4] transition-colors"
+                                title="Unlock"
+                              >
+                                {actionId === u.id ? <Loader2 size={14} className="animate-spin" /> : <Unlock size={14} />}
+                              </button>
+                            )
                           )}
                           <button
                             onClick={() => handleDelete(u.id)}
-                            disabled={actionId === u.id}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors"
-                            title="Delete"
+                            disabled={actionId === u.id || u.status === 'deleted'}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            title={u.status === 'deleted' ? 'Already deleted' : 'Delete'}
                           >
                             {actionId === u.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                           </button>
