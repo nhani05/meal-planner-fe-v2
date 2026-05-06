@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import StatCard from '../components/ui/StatCard';
 import CalorieRing from '../components/ui/CalorieRing';
 import NutritionBar from '../components/ui/NutritionBar';
-import { useApp } from '../context/AppContext';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
@@ -20,8 +19,25 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+const user = { name: 'Guest', goal: 'Maintain', streak: 0 };
+const nutrition = {
+  calories: { current: 0, target: 2000 },
+  protein: { current: 0, target: 130 },
+  carbs: { current: 0, target: 220 },
+  fat: { current: 0, target: 65 },
+  water: { current: 0, target: 8 },
+};
+const weeklyCalories = [
+  { day: 'Mon', calories: 1800 },
+  { day: 'Tue', calories: 1750 },
+  { day: 'Wed', calories: 1900 },
+  { day: 'Thu', calories: 1850 },
+  { day: 'Fri', calories: 1700 },
+  { day: 'Sat', calories: 2000 },
+  { day: 'Sun', calories: 1650 },
+];
+
 export default function Dashboard() {
-  const { user, nutrition, weeklyCalories } = useApp();
   const { calories, protein, carbs, fat, water } = nutrition;
   
   const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;

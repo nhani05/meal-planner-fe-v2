@@ -1,22 +1,29 @@
 import { Plus, Droplets, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useApp } from '../context/AppContext';
 import MealCard from '../components/ui/MealCard';
 import NutritionBar from '../components/ui/NutritionBar';
 import LogMealModal from '../components/ui/LogMealModal';
 import { useState } from 'react';
 
+const meals = { breakfast: null, lunch: null, dinner: null, snack: null };
+const nutrition = {
+  calories: { current: 0, target: 2000 },
+  protein: { current: 0, target: 130 },
+  carbs: { current: 0, target: 220 },
+  fat: { current: 0, target: 65 },
+  water: { current: 0, target: 8 },
+};
+
 export default function TodaysMeals() {
-  const { meals, nutrition, updateWater } = useApp();
   const { calories, protein, carbs, fat, water } = nutrition;
+  const [waterCurrent, setWaterCurrent] = useState(water.current);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
-  
+
   const totalLoggedCals = Object.values(meals).reduce((s, m) => s + (m?.calories || 0), 0);
 
   const handleWaterClick = (index) => {
-    // If clicking the current cup, decrement. If clicking a new cup, set to that index.
-    const newCount = index + 1 === water.current ? index : index + 1;
-    updateWater(newCount);
+    const newCount = index + 1 === waterCurrent ? index : index + 1;
+    setWaterCurrent(newCount);
   };
 
   return (
@@ -100,27 +107,27 @@ export default function TodaysMeals() {
               key={i}
               onClick={() => handleWaterClick(i)}
               className={`w-10 h-12 rounded-xl transition-all duration-300 flex items-center justify-center border-2 ${
-                i < water.current
+                i < waterCurrent
                   ? 'bg-[#33a0fd] border-[#33a0fd] text-white shadow-md'
                   : 'bg-[#f0f6ea] border-transparent text-[#6f7a6b] hover:border-[#33a0fd]/30'
               }`}
               aria-label={`Cup ${i + 1}`}
             >
-              <Droplets size={16} fill={i < water.current ? "currentColor" : "none"} />
+              <Droplets size={16} fill={i < waterCurrent ? "currentColor" : "none"} />
             </button>
           ))}
-          <button 
+          <button
             className="w-10 h-12 rounded-xl border-2 border-dashed border-[#becab9] flex items-center justify-center text-[#6f7a6b] hover:border-[#4caf50] hover:text-[#4caf50] transition-colors"
             title="Add goal"
           >
             <Plus size={16} />
           </button>
         </div>
-        
+
         <div className="mt-6 p-3 rounded-lg bg-[#eaf0e4]/50 flex items-start gap-3">
           <Info size={14} className="text-[#006e1c] mt-0.5 shrink-0" />
           <p className="text-[11px] text-[#3f4a3c] leading-relaxed">
-            Drinking enough water boosts metabolism and helps with digestion. You are <strong>{Math.round((water.current / water.target) * 100)}%</strong> of the way there!
+            Drinking enough water boosts metabolism and helps with digestion. You are <strong>{Math.round((waterCurrent / water.target) * 100)}%</strong> of the way there!
           </p>
         </div>
       </motion.div>

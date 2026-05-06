@@ -1,9 +1,26 @@
-import { mockWeeklyCalories, mockNutrition, mockUser } from '../data/mockData';
 import NutritionBar from '../components/ui/NutritionBar';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   RadarChart, PolarGrid, PolarAngleAxis, Radar,
 } from 'recharts';
+
+const mockWeeklyCalories = [
+  { day: 'Mon', calories: 1800 },
+  { day: 'Tue', calories: 1750 },
+  { day: 'Wed', calories: 1900 },
+  { day: 'Thu', calories: 1850 },
+  { day: 'Fri', calories: 1700 },
+  { day: 'Sat', calories: 2000 },
+  { day: 'Sun', calories: 1650 },
+];
+
+const mockNutrition = {
+  protein: { current: 100, target: 130 },
+  carbs: { current: 150, target: 220 },
+  fat: { current: 40, target: 65 },
+};
+
+const mockUser = { streak: 0 };
 
 const radarData = [
   { subject: 'Protein', A: 85 },

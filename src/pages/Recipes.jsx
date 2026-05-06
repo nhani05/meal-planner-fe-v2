@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import RecipeCard from '../components/ui/RecipeCard';
-import { mockRecipes } from '../data/mockData';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
 const allTags = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Vegan', 'High Protein', 'Gluten-Free', 'Easy'];
@@ -9,7 +8,8 @@ export default function Recipes() {
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState('All');
 
-  const filtered = mockRecipes.filter((r) => {
+  const recipes = []; // TODO: fetch from API in Phase 3
+  const filtered = recipes.filter((r) => {
     const matchSearch = r.name.toLowerCase().includes(search.toLowerCase());
     const matchTag = activeTag === 'All' || r.tags.includes(activeTag) || r.difficulty === activeTag;
     return matchSearch && matchTag;
