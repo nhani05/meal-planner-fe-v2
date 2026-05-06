@@ -1,17 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDishStore } from '../stores/dishStore';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const mealSlots = ['Breakfast', 'Lunch', 'Dinner'];
 const mealEmojis = { Breakfast: '🌅', Lunch: '☀️', Dinner: '🌙' };
-const recipes = []; // TODO: fetch from API in Phase 3
 const weekPlan = {}; // TODO: fetch from API in Phase 4
 
 export default function MealPlanner() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [activeSlot, setActiveSlot] = useState(null); // { day, si }
   const [, setPlan] = useState(weekPlan);
+
+  const systemDishes = useDishStore((state) => state.dishes);
+  const fetchSystemDishes = useDishStore((state) => state.fetchSystemDishes);
+
+  useEffect(() => {
+    fetchSystemDishes();
+  }, [fetchSystemDishes]);
 
   const todayName = days[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
 
@@ -157,13 +164,13 @@ export default function MealPlanner() {
                             className="absolute top-full left-0 right-0 z-10 mt-2 bg-white border border-[#becab9] rounded-xl shadow-xl p-2 max-h-48 overflow-y-auto"
                           >
                             <p className="text-[9px] font-bold text-[#6f7a6b] uppercase p-2 border-b border-[#eaf0e4] mb-1">Select Recipe</p>
-                            {recipes.map(r => (
+                            {systemDishes.map(r => (
                               <button
                                 key={r.id}
                                 onClick={() => handleAddMeal(day, si, r.name)}
                                 className="w-full text-left px-3 py-2 rounded-lg text-[10px] font-semibold text-[#171d16] hover:bg-[#eaf0e4] transition-colors"
                               >
-                                {r.emoji} {r.name}
+                                {r.name}
                               </button>
                             ))}
                           </motion.div>
