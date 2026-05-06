@@ -1,4 +1,5 @@
-import { Flame, Droplets, Activity, TrendingUp, Zap } from 'lucide-react';
+import { useEffect } from 'react';
+import { Flame, Droplets, Activity, TrendingUp, Zap, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StatCard from '../components/ui/StatCard';
 import CalorieRing from '../components/ui/CalorieRing';
@@ -6,6 +7,8 @@ import NutritionBar from '../components/ui/NutritionBar';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
+import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
@@ -19,14 +22,6 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const user = { name: 'Guest', goal: 'Maintain', streak: 0 };
-const nutrition = {
-  calories: { current: 0, target: 2000 },
-  protein: { current: 0, target: 130 },
-  carbs: { current: 0, target: 220 },
-  fat: { current: 0, target: 65 },
-  water: { current: 0, target: 8 },
-};
 const weeklyCalories = [
   { day: 'Mon', calories: 1800 },
   { day: 'Tue', calories: 1750 },
@@ -38,7 +33,28 @@ const weeklyCalories = [
 ];
 
 export default function Dashboard() {
-  const { calories, protein, carbs, fat, water } = nutrition;
+  const { user } = useAuthStore();
+  const { healthGoal, isLoading, fetchProfile, fetchGoal } = useUserStore();
+  const accountId = user?.id;
+
+  useEffect(() => {
+    if (accountId) {
+      fetchProfile(accountId);
+      fetchGoal(accountId);
+    }
+  }, [accountId, fetchProfile, fetchGoal]);
+
+  const username = user?.username || 'Guest';
+  const goalLabel = healthGoal?.goalType
+    ? healthGoal.goalType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    : 'Maintain';
+  const streak = 0;
+
+  const calories = { current: 0, target: healthGoal?.dailyCaloriesKcal || 2000 };
+  const protein = { current: 0, target: healthGoal?.proteinGDay || 130 };
+  const carbs = { current: 0, target: healthGoal?.carbGDay || 220 };
+  const fat = { current: 0, target: healthGoal?.fatGDay || 65 };
+  const water = { current: 0, target: 8 };
   
   const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
   const calPct = Math.round((calories.current / calories.target) * 100);
@@ -58,24 +74,32 @@ export default function Dashboard() {
     visible: { y: 0, opacity: 1 }
   };
 
+  if (isLoading && !healthGoal) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="animate-spin text-[#4caf50]" size={32} />
+      </div>
+    );
+  }
+
   return (
-    <motion.div 
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
       className="space-y-6 max-w-6xl mx-auto"
     >
       {/* Greeting */}
-      <motion.div 
+      <motion.div
         variants={itemVariants}
         className="bg-gradient-to-r from-[#006e1c] to-[#4caf50] rounded-2xl p-6 text-white relative overflow-hidden shadow-lg"
       >
         <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/10" />
         <div className="absolute -right-4 bottom-0 w-24 h-24 rounded-full bg-white/5" />
         <p className="text-sm font-medium opacity-80 mb-1">Good morning,</p>
-        <h2 className="text-2xl font-bold mb-1">{user.name} 👋</h2>
+        <h2 className="text-2xl font-bold mb-1">{username} 👋</h2>
         <p className="text-sm opacity-80">
-          🔥 {user.streak}-day streak · {user.goal} goal
+          🔥 {streak}-day streak · {goalLabel} goal
         </p>
         <div className="mt-4 flex items-center gap-3">
           <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
@@ -97,7 +121,7 @@ export default function Dashboard() {
         <StatCard title="Calories" value={`${calories.current}`} subtitle={`Target: ${calories.target}`} icon={Flame} trend="8%" trendUp={false} accent="#4caf50" />
         <StatCard title="Protein" value={`${protein.current}g`} subtitle={`Target: ${protein.target}g`} icon={Zap} trend="5%" trendUp={true} accent="#006e1c" />
         <StatCard title="Water" value={`${water.current} cups`} subtitle={`Target: ${water.target}`} icon={Droplets} trend={`${Math.max(0, water.target - water.current)} left`} trendUp={false} accent="#0061a4" />
-        <StatCard title="Active Streak" value={`${user.streak} days`} subtitle="Top 5% of users" icon={Activity} trend="14%" trendUp={true} accent="#a63360" />
+        <StatCard title="Active Streak" value={`${streak} days`} subtitle="Start your journey" icon={Activity} trend="0%" trendUp={true} accent="#a63360" />
       </motion.div>
 
       {/* Main content grid */}
