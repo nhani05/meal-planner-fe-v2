@@ -12,3 +12,8 @@ export const updateAdminDish = (id, data) => axiosInstance.put(`/admin/dishes/${
 export const deleteAdminDish = (id) => axiosInstance.delete(`/admin/dishes/${id}`);
 export const getAdminFeedbacks = (params) => axiosInstance.get('/admin/feedbacks', { params });
 export const updateFeedbackStatus = (id, status) => axiosInstance.patch(`/admin/feedbacks/${id}/status`, { status });
+
+// Categories (BE pending — stubbed for future use)
+export const createCategory = (data) => axiosInstance.post('/dish-categories', data);
+export const updateCategory = (id, data) => axiosInstance.put(`/dish-categories/${id}`, data);
+export const deleteCategory = (id) => axiosInstance.delete(`/dish-categories/${id}`);
