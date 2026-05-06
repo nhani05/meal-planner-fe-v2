@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, UtensilsCrossed, CalendarDays,
   BookOpen, BarChart3, Settings, Menu, X, Leaf,
-  ChevronLeft, ChevronRight, LogOut
+  ChevronLeft, ChevronRight, LogOut, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
@@ -21,6 +21,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   const handleLogout = () => {
     logout();
@@ -87,7 +88,7 @@ export default function Sidebar() {
                     )}
                   </AnimatePresence>
                   {isActive && (
-                    <motion.div 
+                    <motion.div
                       layoutId="nav-active"
                       className="absolute left-0 w-1 h-6 bg-[#006e1c] rounded-r-full"
                     />
@@ -96,6 +97,42 @@ export default function Sidebar() {
               )}
             </NavLink>
           ))}
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all group relative ${
+                  isActive
+                    ? 'text-[#006e1c] bg-[#f5fbef]'
+                    : 'text-[#6f7a6b] hover:text-[#006e1c] hover:bg-[#f5fbef]/50'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <ShieldCheck size={20} className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-[#006e1c]' : ''}`} />
+                  <AnimatePresence>
+                    {!collapsed && (
+                      <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="whitespace-nowrap"
+                      >
+                        Admin
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-active"
+                      className="absolute left-0 w-1 h-6 bg-[#006e1c] rounded-r-full"
+                    />
+                  )}
+                </>
+              )}
+            </NavLink>
+          )}
         </nav>
 
         {/* Footer actions */}

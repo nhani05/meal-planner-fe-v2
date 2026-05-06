@@ -14,6 +14,13 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import ApiTestPage from './pages/test/ApiTestPage';
+import AdminRoute from './components/common/AdminRoute';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminDishes from './pages/admin/AdminDishes';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminFeedbacks from './pages/admin/AdminFeedbacks';
 
 export default function App() {
   return (
@@ -35,6 +42,15 @@ export default function App() {
             <Route path="recipes" element={<Recipes />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
+          </Route>
+        </Route>
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="dishes" element={<AdminDishes />} />
+            <Route path="categories" element={<AdminCategories />} />
+            <Route path="feedbacks" element={<AdminFeedbacks />} />
           </Route>
         </Route>
       </Routes>
