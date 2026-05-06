@@ -13,6 +13,9 @@ export const deleteAdminDish = (id) => axiosInstance.delete(`/admin/dishes/${id}
 export const getAdminFeedbacks = (params) => axiosInstance.get('/admin/feedbacks', { params });
 export const updateFeedbackStatus = (id, status) => axiosInstance.patch(`/admin/feedbacks/${id}/status`, { status });
 
+// UC16 NFR16-3: Admin audit logs
+export const getAdminAuditLogs = (params) => axiosInstance.get('/admin/audit-logs', { params });
+
 // Categories (BE pending — stubbed for future use)
 export const createCategory = (data) => axiosInstance.post('/dish-categories', data);
 export const updateCategory = (id, data) => axiosInstance.put(`/dish-categories/${id}`, data);

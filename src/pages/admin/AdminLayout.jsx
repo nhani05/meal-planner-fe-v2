@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, UtensilsCrossed, Tag, MessageSquare,
-  ArrowLeft, Menu, X, ShieldCheck, LogOut
+  ArrowLeft, Menu, X, ShieldCheck, LogOut, History
 } from 'lucide-react';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,6 +13,7 @@ const adminNav = [
   { path: '/admin/dishes', label: 'Dishes', icon: UtensilsCrossed },
   { path: '/admin/categories', label: 'Categories', icon: Tag },
   { path: '/admin/feedbacks', label: 'Feedbacks', icon: MessageSquare },
+  { path: '/admin/audit-logs', label: 'Audit Logs', icon: History },
 ];
 
 export default function AdminLayout() {

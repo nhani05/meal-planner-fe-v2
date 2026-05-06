@@ -1,22 +1,120 @@
 import { useState, useEffect } from 'react';
-import { Tag, Plus, Pencil, Trash2, Loader2, Lock } from 'lucide-react';
+import { Tag, Plus, Pencil, Trash2, Loader2, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import * as dishApi from '../../api/dishApi';
 import { useUiStore } from '../../stores/uiStore';
+
+function CategoryModal({ isOpen, onClose, category, onSave }) {
+  const [name, setName] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (category) {
+      setName(category.name || '');
+    } else {
+      setName('');
+    }
+  }, [category, isOpen]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setSaving(true);
+    try {
+      if (category?.id) {
+        await dishApi.updateCategory(category.id, name.trim());
+        useUiStore.getState().showToast('Category updated', 'success');
+      } else {
+        await dishApi.createCategory(name.trim());
+        useUiStore.getState().showToast('Category created', 'success');
+      }
+      onSave();
+      onClose();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Save failed';
+      useUiStore.getState().showToast(msg, 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+        <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          className="relative bg-white w-full max-w-md rounded-2xl shadow-xl p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-black text-[#171d16]">{category ? 'Edit Category' : 'New Category'}</h2>
+            <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#f0f6ea] text-[#6f7a6b]"><X size={20} /></button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-[10px] font-bold text-[#6f7a6b] uppercase mb-1 block">Category Name</label>
+              <input
+                type="text"
+                placeholder="Enter category name..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-[#f0f6ea] border-transparent focus:bg-white focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 text-sm outline-none transition-all"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2 border-t border-[#eaf0e4]">
+              <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl text-sm font-bold text-[#6f7a6b] hover:bg-[#f0f6ea] transition-all">Cancel</button>
+              <button type="submit" disabled={saving || !name.trim()}
+                className="px-6 py-2.5 rounded-xl text-sm font-bold bg-[#4caf50] text-white hover:bg-[#006e1c] transition-all disabled:opacity-50 flex items-center gap-2">
+                {saving && <Loader2 size={14} className="animate-spin" />}
+                {category ? 'Save Changes' : 'Create Category'}
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionId, setActionId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
-  useEffect(() => {
+  const fetchCategories = () => {
+    setLoading(true);
     dishApi.getCategories()
       .then((res) => setCategories(res.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
-  const handleAdd = () => {
-    useUiStore.getState().showToast('Category creation is coming soon (BE pending)', 'info');
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this category? This cannot be undone.')) return;
+    setActionId(id);
+    try {
+      await dishApi.deleteCategory(id);
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+      useUiStore.getState().showToast('Category deleted', 'success');
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Delete failed';
+      useUiStore.getState().showToast(msg, 'error');
+    } finally {
+      setActionId(null);
+    }
   };
+
+  const openCreate = () => { setEditingCategory(null); setModalOpen(true); };
+  const openEdit = (category) => { setEditingCategory(category); setModalOpen(true); };
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -25,8 +123,8 @@ export default function AdminCategories() {
           <h1 className="text-2xl font-black text-[#171d16]">Categories</h1>
           <p className="text-xs font-bold text-[#6f7a6b] uppercase tracking-wider mt-1">Manage dish categories</p>
         </div>
-        <button onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#becab9] text-white text-sm font-bold opacity-60 cursor-not-allowed">
+        <button onClick={openCreate}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#4caf50] text-white text-sm font-bold hover:bg-[#006e1c] transition-all shadow-lg shadow-[#4caf50]/20">
           <Plus size={16} /> New Category
         </button>
       </div>
@@ -53,13 +151,13 @@ export default function AdminCategories() {
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button disabled title="Coming soon"
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#becab9] cursor-not-allowed opacity-50">
+                        <button onClick={() => openEdit(c)}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#0061a4] hover:bg-[#d1e4ff] transition-colors">
                           <Pencil size={14} />
                         </button>
-                        <button disabled title="Coming soon"
-                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#becab9] cursor-not-allowed opacity-50">
-                          <Trash2 size={14} />
+                        <button onClick={() => handleDelete(c.id)} disabled={actionId === c.id}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6f7a6b] hover:text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors">
+                          {actionId === c.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                         </button>
                       </div>
                     </td>
@@ -74,9 +172,7 @@ export default function AdminCategories() {
         )}
       </div>
 
-      <div className="p-4 rounded-xl bg-[#ffecb3]/30 border border-[#ffecb3] text-[#ff8f00] text-xs font-semibold flex items-center gap-2">
-        <Lock size={14} /> Add / Edit / Delete categories will be enabled when the backend endpoints are ready.
-      </div>
+      <CategoryModal isOpen={modalOpen} onClose={() => setModalOpen(false)} category={editingCategory} onSave={fetchCategories} />
     </div>
   );
 }

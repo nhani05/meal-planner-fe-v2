@@ -22,6 +22,7 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminDishes from './pages/admin/AdminDishes';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminFeedbacks from './pages/admin/AdminFeedbacks';
+import AdminAuditLogs from './pages/admin/AdminAuditLogs';
 
 export default function App() {
   return (
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="dishes" element={<AdminDishes />} />
             <Route path="categories" element={<AdminCategories />} />
             <Route path="feedbacks" element={<AdminFeedbacks />} />
+            <Route path="audit-logs" element={<AdminAuditLogs />} />
           </Route>
         </Route>
       </Routes>

@@ -5,11 +5,11 @@ import { useUiStore } from '../../stores/uiStore';
 
 const statusColors = {
   pending: 'bg-[#ffecb3] text-[#ff8f00]',
+  processing: 'bg-[#d1e4ff] text-[#0061a4]',
   resolved: 'bg-[#eaf0e4] text-[#006e1c]',
-  rejected: 'bg-[#ffdad6] text-[#ba1a1a]',
 };
 
-const statusOptions = ['pending', 'resolved', 'rejected'];
+const statusOptions = ['pending', 'processing', 'resolved'];
 
 export default function AdminFeedbacks() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -68,8 +68,8 @@ export default function AdminFeedbacks() {
           className="px-4 py-2.5 rounded-xl bg-white border border-[#becab9]/50 text-sm focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 outline-none">
           <option value="">All statuses</option>
           <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
           <option value="resolved">Resolved</option>
-          <option value="rejected">Rejected</option>
         </select>
       </div>
 
