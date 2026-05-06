@@ -13,4 +13,5 @@ export const updatePortion = (planId, mealType, portionId, data) => axiosInstanc
 export const deletePortion = (planId, mealType, portionId) => axiosInstance.delete(`/meal-plans/${planId}/meals/${mealType}/portions/${portionId}`);
 export const getTemplates = (accountId) => axiosInstance.get(`/meal-plan-templates?accountId=${accountId}`);
 export const createTemplate = (data) => axiosInstance.post('/meal-plan-templates', data);
+export const updateTemplate = (id, data) => axiosInstance.put(`/meal-plan-templates/${id}`, data);
 export const deleteTemplate = (id) => axiosInstance.delete(`/meal-plan-templates/${id}`);

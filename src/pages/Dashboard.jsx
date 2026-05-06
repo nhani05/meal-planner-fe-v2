@@ -9,6 +9,9 @@ import {
 } from 'recharts';
 import { useAuthStore } from '../stores/authStore';
 import { useUserStore } from '../stores/userStore';
+import { useMealStore } from '../stores/mealStore';
+
+const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
@@ -22,42 +25,94 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const weeklyCalories = [
-  { day: 'Mon', calories: 1800 },
-  { day: 'Tue', calories: 1750 },
-  { day: 'Wed', calories: 1900 },
-  { day: 'Thu', calories: 1850 },
-  { day: 'Fri', calories: 1700 },
-  { day: 'Sat', calories: 2000 },
-  { day: 'Sun', calories: 1650 },
-];
+function getTodayStr() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export default function Dashboard() {
   const { user } = useAuthStore();
-  const { healthGoal, isLoading, fetchProfile, fetchGoal } = useUserStore();
+  const { healthGoal, isLoading: userLoading, fetchProfile, fetchGoal } = useUserStore();
+  const {
+    dailyTotals,
+    weekPlanSummaries,
+    isLoading: mealLoading,
+    loadTodayData,
+    fetchWeekPlans,
+  } = useMealStore();
   const accountId = user?.id;
 
   useEffect(() => {
     if (accountId) {
       fetchProfile(accountId);
       fetchGoal(accountId);
+      loadTodayData(accountId, getTodayStr());
+      fetchWeekPlans(accountId, 0);
     }
-  }, [accountId, fetchProfile, fetchGoal]);
+  }, [accountId, fetchProfile, fetchGoal, loadTodayData, fetchWeekPlans]);
 
   const username = user?.username || 'Guest';
   const goalLabel = healthGoal?.goalType
     ? healthGoal.goalType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
     : 'Maintain';
-  const streak = 0;
 
-  const calories = { current: 0, target: healthGoal?.dailyCaloriesKcal || 2000 };
-  const protein = { current: 0, target: healthGoal?.proteinGDay || 130 };
-  const carbs = { current: 0, target: healthGoal?.carbGDay || 220 };
-  const fat = { current: 0, target: healthGoal?.fatGDay || 65 };
+  const calories = {
+    current: Math.round(dailyTotals.calories || 0),
+    target: Math.round(healthGoal?.dailyCaloriesKcal || 2000),
+  };
+  const protein = {
+    current: Math.round(dailyTotals.protein || 0),
+    target: Math.round(healthGoal?.proteinGDay || 130),
+  };
+  const carbs = {
+    current: Math.round(dailyTotals.carbs || 0),
+    target: Math.round(healthGoal?.carbGDay || 220),
+  };
+  const fat = {
+    current: Math.round(dailyTotals.fat || 0),
+    target: Math.round(healthGoal?.fatGDay || 65),
+  };
   const water = { current: 0, target: 8 };
-  
+
+  // Build weekly chart data from real DB data
+  const weeklyCalories = dayLabels.map((label, idx) => {
+    const d = new Date();
+    const dow = d.getDay();
+    const mondayOffset = dow === 0 ? -6 : 1 - dow;
+    const date = new Date(d);
+    date.setDate(d.getDate() + mondayOffset + idx);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+    const totals = weekPlanSummaries[dateStr];
+    return { day: label, calories: Math.round(totals?.calories || 0), dateStr };
+  });
+
   const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
-  const calPct = Math.round((calories.current / calories.target) * 100);
+  const calPct = Math.min(100, Math.round((calories.current / (calories.target || 1)) * 100));
+
+  // Compute streak from week data: consecutive days (ending today) with calories > 0
+  let streak = 0;
+  if (weeklyCalories[todayIdx]?.calories > 0) {
+    for (let i = todayIdx; i >= 0; i--) {
+      if (weeklyCalories[i].calories > 0) streak++;
+      else break;
+    }
+  }
+
+  // Trend helpers
+  const proteinTrend = protein.target ? Math.round((protein.current / protein.target) * 100) : 0;
+  const waterLeft = Math.max(0, water.target - water.current);
+
+  const avgWeekly = weeklyCalories.length
+    ? Math.round(weeklyCalories.reduce((s, d) => s + d.calories, 0) / weeklyCalories.length)
+    : 0;
+
+  const isLoading = userLoading || mealLoading;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -118,10 +173,10 @@ export default function Dashboard() {
 
       {/* Stat row */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Calories" value={`${calories.current}`} subtitle={`Target: ${calories.target}`} icon={Flame} trend="8%" trendUp={false} accent="#4caf50" />
-        <StatCard title="Protein" value={`${protein.current}g`} subtitle={`Target: ${protein.target}g`} icon={Zap} trend="5%" trendUp={true} accent="#006e1c" />
-        <StatCard title="Water" value={`${water.current} cups`} subtitle={`Target: ${water.target}`} icon={Droplets} trend={`${Math.max(0, water.target - water.current)} left`} trendUp={false} accent="#0061a4" />
-        <StatCard title="Active Streak" value={`${streak} days`} subtitle="Start your journey" icon={Activity} trend="0%" trendUp={true} accent="#a63360" />
+        <StatCard title="Calories" value={`${calories.current}`} subtitle={`Target: ${calories.target}`} icon={Flame} trend={`${calPct}%`} trendUp={calPct >= 100} accent="#4caf50" />
+        <StatCard title="Protein" value={`${protein.current}g`} subtitle={`Target: ${protein.target}g`} icon={Zap} trend={`${proteinTrend}%`} trendUp={proteinTrend >= 100} accent="#006e1c" />
+        <StatCard title="Water" value={`${water.current} cups`} subtitle={`Target: ${water.target}`} icon={Droplets} trend={`${waterLeft} left`} trendUp={false} accent="#0061a4" />
+        <StatCard title="Active Streak" value={`${streak} days`} subtitle={streak > 0 ? 'Keep it up!' : 'Start your journey'} icon={Activity} trend={`${streak > 0 ? '+' : ''}${streak}`} trendUp={streak > 0} accent="#a63360" />
       </motion.div>
 
       {/* Main content grid */}
@@ -148,7 +203,7 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={weeklyCalories} barSize={32}>
               <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#6f7a6b', fontWeight: 500 }} axisLine={false} tickLine={false} />
-              <YAxis hide domain={[1400, 2200]} />
+              <YAxis hide />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f0f6ea', radius: 8 }} />
               <Bar dataKey="calories" radius={[8, 8, 0, 0]}>
                 {weeklyCalories.map((_, i) => (
@@ -160,7 +215,7 @@ export default function Dashboard() {
           <div className="mt-6 flex items-center gap-6 text-[10px] text-[#6f7a6b] font-medium border-t border-[#eaf0e4] pt-4">
             <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-sm bg-[#4caf50]" />Today</span>
             <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-sm bg-[#dee4d9]" />Other days</span>
-            <span className="ml-auto flex items-center gap-1.5"><TrendingUp size={12} /> Average: {Math.round(weeklyCalories.reduce((s, d) => s + d.calories, 0) / 7)} kcal</span>
+            <span className="ml-auto flex items-center gap-1.5"><TrendingUp size={12} /> Average: {avgWeekly} kcal</span>
           </div>
         </motion.div>
       </div>

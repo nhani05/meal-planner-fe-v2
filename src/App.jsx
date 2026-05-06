@@ -9,6 +9,7 @@ import MealPlanner from './pages/MealPlanner';
 import Recipes from './pages/Recipes';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
+import Templates from './pages/Templates';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="meals" element={<TodaysMeals />} />
             <Route path="planner" element={<MealPlanner />} />
             <Route path="recipes" element={<Recipes />} />
+            <Route path="templates" element={<Templates />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
           </Route>
