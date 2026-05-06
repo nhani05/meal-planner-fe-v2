@@ -4,6 +4,7 @@ import { useUiStore } from './uiStore';
 
 export const useDishStore = create((set, get) => ({
   dishes: [],
+  systemDishes: [],
   categories: [],
   favorites: [],
   totalPages: 0,
@@ -86,7 +87,7 @@ export const useDishStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const res = await dishApi.getSystemDishes();
-      set({ dishes: res.data || [], isLoading: false });
+      set({ systemDishes: res.data || [], isLoading: false });
     } catch (err) {
       set({ isLoading: false });
       const msg = err.response?.data?.message || err.message || 'Failed to load system dishes';
