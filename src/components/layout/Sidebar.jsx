@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 
 const navItems = [
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/meals', label: 'Today\'s Meals', icon: UtensilsCrossed },
   { path: '/planner', label: 'Meal Planner', icon: CalendarDays },
   { path: '/recipes', label: 'Recipes', icon: BookOpen },
@@ -65,7 +65,7 @@ export default function Sidebar() {
             <NavLink
               key={path}
               to={path}
-              end={path === '/'}
+              end={path === '/dashboard'}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-bold transition-all group relative ${
                   isActive
@@ -163,7 +163,7 @@ export default function Sidebar() {
           <NavLink
             key={path}
             to={path}
-            end={path === '/'}
+            end={path === '/dashboard'}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center py-2 px-1 gap-1 text-[10px] font-black uppercase tracking-tighter transition-all ${
                 isActive ? 'text-[#006e1c]' : 'text-[#6f7a6b]'

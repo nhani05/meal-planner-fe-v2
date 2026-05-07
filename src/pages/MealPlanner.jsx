@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/authStore';
 import { useMealStore } from '../stores/mealStore';
 import { useUserStore } from '../stores/userStore';
+import { useUiStore } from '../stores/uiStore';
 import { getMealPlanById } from '../api/mealApi';
 import PlanCreationModal from '../components/planner/PlanCreationModal';
 import TemplateListModal from '../components/planner/TemplateListModal';
@@ -211,6 +212,22 @@ export default function MealPlanner() {
     setViewMode('calendar');
   }, [selectedPlan, selectedDate, deletePlan]);
 
+  const updateTemplateName = useMealStore((state) => state.updateTemplateName);
+
+  const handleOverwriteTemplate = useCallback(
+    async (templateId, templateName) => {
+      await updateTemplateName(templateId, templateName);
+      if (accountId) fetchTemplates(accountId);
+    },
+    [updateTemplateName, accountId, fetchTemplates]
+  );
+
+  const handleUpdatePlan = useCallback(async () => {
+    if (!accountId || !selectedDate) return;
+    await loadDayDetail(accountId, selectedDate);
+    useUiStore.getState().showToast('Plan updated successfully', 'success');
+  }, [accountId, selectedDate, loadDayDetail]);
+
   const handleSaveTemplate = useCallback(
     async (templateName) => {
       if (!selectedPlan) return;
@@ -375,6 +392,9 @@ export default function MealPlanner() {
             onRemovePortion={handleRemovePortion}
             onDeletePlan={handleDeletePlan}
             onSaveTemplate={handleSaveTemplate}
+            onOverwriteTemplate={handleOverwriteTemplate}
+            onUpdatePlan={handleUpdatePlan}
+            existingTemplates={templates}
           />
         )}
       </AnimatePresence>
