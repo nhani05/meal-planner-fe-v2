@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, Trash2, Save, Plus, Loader2 } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { ArrowLeft, Trash2, Save, Plus, Loader2, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MealCard from '../ui/MealCard';
 import NutritionBar from '../ui/NutritionBar';
@@ -18,17 +18,30 @@ export default function DayDetailView({
   isLoading,
   isAdding,
   isSavingTemplate,
+  existingTemplates,
   onBack,
   onAddFood,
   onUpdatePortion,
   onRemovePortion,
   onDeletePlan,
   onSaveTemplate,
+  onOverwriteTemplate,
+  onUpdatePlan,
 }) {
   const [activeMealType, setActiveMealType] = useState(null);
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
   const [isSaveTemplateOpen, setIsSaveTemplateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [invalidMeals, setInvalidMeals] = useState({});
+
+  const handleValidationChange = useCallback((mealType, hasError) => {
+    setInvalidMeals((prev) => {
+      if (prev[mealType] === hasError) return prev;
+      return { ...prev, [mealType]: hasError };
+    });
+  }, []);
+
+  const hasAnyInvalid = Object.values(invalidMeals).some(Boolean);
 
   const hasPortions = mealTypes.some((t) => (portions[t] || []).length > 0);
 
@@ -74,9 +87,18 @@ export default function DayDetailView({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {plan && (
             <>
+              {onUpdatePlan && (
+                <button
+                  onClick={onUpdatePlan}
+                  disabled={isAdding || hasAnyInvalid}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#4caf50] text-white text-xs font-bold transition-all shadow-sm shadow-[#4caf50]/20 hover:bg-[#006e1c] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <RefreshCw size={14} /> Update Plan
+                </button>
+              )}
               <button
                 onClick={() => setIsSaveTemplateOpen(true)}
                 disabled={!hasPortions || isAdding}
@@ -138,6 +160,7 @@ export default function DayDetailView({
               onUpdatePortion={(portionId, quantityG) => onUpdatePortion(type, portionId, quantityG)}
               onRemovePortion={(portionId) => onRemovePortion(type, portionId)}
               isAdding={isAdding}
+              onValidationChange={handleValidationChange}
             />
           </motion.div>
         ))}
@@ -171,7 +194,9 @@ export default function DayDetailView({
         isOpen={isSaveTemplateOpen}
         onClose={() => setIsSaveTemplateOpen(false)}
         onConfirm={onSaveTemplate}
+        onOverwrite={onOverwriteTemplate}
         isSaving={isSavingTemplate}
+        existingTemplates={existingTemplates || []}
       />
 
       <DeleteConfirmDialog

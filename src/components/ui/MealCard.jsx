@@ -1,7 +1,8 @@
 /**
  * Meal card for daily meals view
- * Props: mealType, portions[], onAddPortion, onUpdatePortion, onRemovePortion, isAdding
+ * Props: mealType, portions[], onAddPortion, onUpdatePortion, onRemovePortion, isAdding, onValidationChange
  */
+import { useState, useEffect } from 'react';
 import { Plus, Trash2, Minus, Plus as PlusIcon } from 'lucide-react';
 
 const mealIcons = {
@@ -18,7 +19,48 @@ export default function MealCard({
   onUpdatePortion,
   onRemovePortion,
   isAdding,
+  onValidationChange,
 }) {
+  const [localQuantities, setLocalQuantities] = useState({});
+  const [quantityErrors, setQuantityErrors] = useState({});
+
+  useEffect(() => {
+    const init = {};
+    portions.forEach((p) => {
+      init[p.id] = p.quantityG || 100;
+    });
+    setLocalQuantities(init);
+    setQuantityErrors({});
+  }, [portions]);
+
+  const hasErrors = Object.values(quantityErrors).some(Boolean);
+
+  useEffect(() => {
+    if (onValidationChange) onValidationChange(mealType, hasErrors);
+  }, [hasErrors, mealType, onValidationChange]);
+
+  const handleQuantityChange = (portionId, value) => {
+    const num = parseInt(value) || 0;
+    setLocalQuantities((prev) => ({ ...prev, [portionId]: num }));
+    setQuantityErrors((prev) => ({ ...prev, [portionId]: num <= 0 }));
+  };
+
+  const commitQuantity = (portionId) => {
+    const q = localQuantities[portionId];
+    if (!q || q <= 0) {
+      setQuantityErrors((prev) => ({ ...prev, [portionId]: true }));
+      return;
+    }
+    onUpdatePortion(portionId, q);
+  };
+
+  const handleStepperChange = (portionId, currentQ, delta) => {
+    const newQ = Math.max(1, currentQ + delta);
+    setLocalQuantities((prev) => ({ ...prev, [portionId]: newQ }));
+    setQuantityErrors((prev) => ({ ...prev, [portionId]: false }));
+    onUpdatePortion(portionId, newQ);
+  };
+
   const totalCals = portions.reduce((s, p) => s + (p.caloriesKcal || 0), 0);
   const totalProtein = portions.reduce((s, p) => s + (p.proteinG || 0), 0);
   const totalCarbs = portions.reduce((s, p) => s + (p.carbG || 0), 0);
@@ -47,42 +89,60 @@ export default function MealCard({
 
       {/* Portions list */}
       <div className="flex-1 p-3 space-y-2">
-        {portions.map((p) => (
-          <div
-            key={p.id}
-            className="flex items-center gap-2 bg-[#f5fbef] rounded-lg px-3 py-2"
-          >
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-[#171d16] truncate">{p.dishName || `Dish #${p.dishId}`}</p>
-              <p className="text-[10px] text-[#6f7a6b]">{Math.round(p.caloriesKcal || 0)} kcal</p>
-            </div>
-
-            {/* Quantity stepper */}
-            <div className="flex items-center gap-1 shrink-0">
-              <button
-                onClick={() => onUpdatePortion(p.id, Math.max(50, (p.quantityG || 100) - 50))}
-                className="w-6 h-6 rounded-md bg-white border border-[#becab9]/50 flex items-center justify-center text-[#6f7a6b] hover:text-[#006e1c] transition-colors"
-              >
-                <Minus size={12} />
-              </button>
-              <span className="text-xs font-bold text-[#171d16] w-10 text-center">{p.quantityG || 100}g</span>
-              <button
-                onClick={() => onUpdatePortion(p.id, (p.quantityG || 100) + 50)}
-                className="w-6 h-6 rounded-md bg-white border border-[#becab9]/50 flex items-center justify-center text-[#6f7a6b] hover:text-[#006e1c] transition-colors"
-              >
-                <PlusIcon size={12} />
-              </button>
-            </div>
-
-            {/* Delete */}
-            <button
-              onClick={() => onRemovePortion(p.id)}
-              className="w-7 h-7 rounded-md flex items-center justify-center text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors shrink-0"
+        {portions.map((p) => {
+          const localQ = localQuantities[p.id] ?? p.quantityG ?? 100;
+          const hasError = !!quantityErrors[p.id];
+          return (
+            <div
+              key={p.id}
+              className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+                hasError ? 'bg-[#fff5f5] border border-[#ba1a1a]' : 'bg-[#f5fbef]'
+              }`}
             >
-              <Trash2 size={14} />
-            </button>
-          </div>
-        ))}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-[#171d16] truncate">{p.dishName || `Dish #${p.dishId}`}</p>
+                <p className="text-[10px] text-[#6f7a6b]">{Math.round(p.caloriesKcal || 0)} kcal</p>
+              </div>
+
+              {/* Quantity stepper */}
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  onClick={() => handleStepperChange(p.id, localQ, -50)}
+                  className="w-6 h-6 rounded-md bg-white border border-[#becab9]/50 flex items-center justify-center text-[#6f7a6b] hover:text-[#006e1c] transition-colors"
+                >
+                  <Minus size={12} />
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  value={localQ}
+                  onChange={(e) => handleQuantityChange(p.id, e.target.value)}
+                  onBlur={() => commitQuantity(p.id)}
+                  className={`w-14 text-center text-xs font-bold py-0.5 rounded-md border outline-none transition-colors ${
+                    hasError
+                      ? 'border-[#ba1a1a] bg-[#fff5f5] text-[#ba1a1a]'
+                      : 'border-[#becab9]/50 bg-white text-[#171d16]'
+                  }`}
+                />
+                <span className="text-[10px] text-[#6f7a6b]">g</span>
+                <button
+                  onClick={() => handleStepperChange(p.id, localQ, 50)}
+                  className="w-6 h-6 rounded-md bg-white border border-[#becab9]/50 flex items-center justify-center text-[#6f7a6b] hover:text-[#006e1c] transition-colors"
+                >
+                  <PlusIcon size={12} />
+                </button>
+              </div>
+
+              {/* Delete */}
+              <button
+                onClick={() => onRemovePortion(p.id)}
+                className="w-7 h-7 rounded-md flex items-center justify-center text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors shrink-0"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          );
+        })}
 
         {portions.length === 0 && (
           <div className="text-center py-4 text-[#6f7a6b]">

@@ -26,7 +26,7 @@ export default function Login() {
       const res = await loginApi(data);
       authLogin(res.data.token, res.data.user);
       showToast('Login successful!', 'success');
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Login failed';
       showToast(msg, 'error');

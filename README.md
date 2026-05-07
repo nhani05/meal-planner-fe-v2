@@ -1,16 +1,77 @@
-# React + Vite
+# NutriPlan - Meal Planner System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, intelligent meal planning application built with React and Vite. NutriPlan helps users create personalized meal plans, track nutrition, and achieve their health goals.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Smart Meal Planning**: Create weekly meal plans tailored to your dietary preferences and health goals
+- **Nutrition Tracking**: Monitor calories, macros, and micronutrients in real-time
+- **Recipe Discovery**: Browse and search through a curated collection of healthy recipes
+- **Progress Analytics**: Visualize your nutrition journey with detailed charts and insights
+- **Personalized Templates**: Save and reuse your favorite meal plan templates
+- **Admin Dashboard**: Comprehensive management tools for administrators
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19, Vite, TailwindCSS 4
+- **State Management**: Zustand
+- **Animations**: Framer Motion
+- **Charts**: Recharts
+- **Forms**: React Hook Form + Zod
+- **Icons**: Lucide React
+- **HTTP Client**: Axios
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Project Structure
+
+```
+src/
+├── api/                    # API layer (Axios instances)
+├── components/
+│   ├── auth/              # Authentication components
+│   ├── common/            # Shared components (ProtectedRoute, Toast)
+│   ├── landing/           # Landing page components
+│   ├── layout/            # App layout components
+│   ├── planner/           # Meal planner components
+│   └── ui/                # Reusable UI components
+├── pages/
+│   ├── admin/             # Admin pages
+│   ├── auth/              # Auth pages (Login, Register)
+│   ├── landing/           # Landing pages (Home, Features, About, Contact)
+│   └── test/              # Test pages
+├── stores/                # Zustand stores
+└── main.jsx               # App entry point
+```
+
+## Documentation
+
+- [API Documentation](./docs/API.md) - Complete API reference
+- [OpenAPI Spec](./docs/OPENAPI.yaml) - Import into Swagger UI
+- [Entity Documentation](./docs/database/ENTITY_DOCUMENTATION.md) - Database schema
+
+## Development
+
+The app uses Vite with HMR (Hot Module Replacement) for fast development. ESLint is configured for code quality.
+
+## Environment Variables
+
+Create a `.env` file:
+
+```
+VITE_API_URL=http://localhost:8081/api
+```

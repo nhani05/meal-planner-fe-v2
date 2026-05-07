@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
 
 const titles = {
-  '/': 'Dashboard',
+  '/dashboard': 'Dashboard',
   '/meals': "Today's Intake",
   '/planner': 'Weekly Planner',
   '/recipes': 'Recipe Discovery',

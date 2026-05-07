@@ -51,7 +51,7 @@ export default function AdminLayout() {
         </div>
 
         <button
-          onClick={() => { navigate('/'); setMobileOpen(false); }}
+          onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
           className="mx-4 mt-4 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-[#6f7a6b] hover:text-[#006e1c] hover:bg-[#f5fbef] transition-all"
         >
           <ArrowLeft size={16} /> Back to App

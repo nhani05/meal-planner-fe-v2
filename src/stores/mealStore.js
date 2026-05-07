@@ -163,9 +163,10 @@ export const useMealStore = create((set, get) => ({
         planDate: date,
       });
       if (targetState === 'todayPlan') set({ todayPlan: res.data });
+      useUiStore.getState().showToast('Plan created successfully', 'success');
       return res.data;
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Failed to create meal plan';
+      const msg = err.response?.data?.message || err.message || 'Failed to create plan. Please try again.';
       useUiStore.getState().showToast(msg, 'error');
       return null;
     }
