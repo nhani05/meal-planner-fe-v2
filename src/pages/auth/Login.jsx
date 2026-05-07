@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogIn } from 'lucide-react';
+import { LogIn, Lock } from 'lucide-react';
 import { loginSchema } from '../../utils/validators';
 import { login as loginApi } from '../../api/authApi';
 import { useAuthStore } from '../../stores/authStore';
@@ -11,6 +11,7 @@ import { useUiStore } from '../../stores/uiStore';
 export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [lockoutInfo, setLockoutInfo] = useState(null);
   const authLogin = useAuthStore((state) => state.login);
   const showToast = useUiStore((state) => state.showToast);
 
@@ -22,14 +23,22 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     setLoading(true);
+    setLockoutInfo(null);
     try {
       const res = await loginApi(data);
       authLogin(res.data.token, res.data.user);
       showToast('Login successful!', 'success');
       navigate('/dashboard');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Login failed';
-      showToast(msg, 'error');
+      // Handle account lockout (423 Locked)
+      if (err.response?.status === 423) {
+        const lockData = err.response.data;
+        setLockoutInfo(lockData);
+        showToast(lockData.message || 'Account is locked', 'error');
+      } else {
+        const msg = err.response?.data?.message || err.message || 'Login failed';
+        showToast(msg, 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -39,6 +48,19 @@ export default function Login() {
     <div className="bg-white rounded-2xl border border-[#becab9] shadow-card p-8">
       <h2 className="text-xl font-bold text-[#171d16] mb-1">Welcome back</h2>
       <p className="text-sm text-[#6f7a6b] mb-6">Sign in to continue your health journey</p>
+
+      {/* Account Lockout Warning */}
+      {lockoutInfo && (
+        <div className="mb-4 p-4 rounded-xl bg-[#ffdad6] border border-[#ba1a1a]/20">
+          <div className="flex items-start gap-3">
+            <Lock size={20} className="text-[#ba1a1a] mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-[#ba1a1a]">{lockoutInfo.message || 'Account is locked'}</p>
+              <p className="text-xs text-[#8c1d18] mt-1">Please contact admin to unlock your account.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
@@ -75,11 +97,11 @@ export default function Login() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || lockoutInfo}
           className="w-full flex items-center justify-center gap-2 bg-[#4caf50] hover:bg-[#006e1c] text-white font-bold py-3 rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <LogIn size={18} />
-          {loading ? 'Signing in...' : 'Sign In'}
+          {loading ? 'Signing in...' : lockoutInfo ? 'Account Locked' : 'Sign In'}
         </button>
       </form>
 
