@@ -15,7 +15,6 @@ export default function Recipes() {
   const currentPage = useDishStore((state) => state.currentPage);
   const totalElements = useDishStore((state) => state.totalElements);
   const isLoading = useDishStore((state) => state.isLoading);
-  const filters = useDishStore((state) => state.filters);
   const fetchDishes = useDishStore((state) => state.fetchDishes);
   const fetchCategories = useDishStore((state) => state.fetchCategories);
   const fetchFavorites = useDishStore((state) => state.fetchFavorites);
@@ -57,7 +56,7 @@ export default function Recipes() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6f7a6b]" />
           <input
             type="text"
-            placeholder="Search recipes…"
+            placeholder="Search recipes..."
             value={search}
             onChange={handleSearchChange}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#becab9] text-sm text-[#171d16] placeholder-[#6f7a6b] focus:outline-none focus:border-[#4caf50] focus:ring-2 transition"
@@ -115,7 +114,7 @@ export default function Recipes() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <span className="text-5xl mb-4">🔍</span>
+          <Search size={48} className="mb-4 text-[#6f7a6b]" />
           <p className="font-semibold text-[#171d16]">No recipes found</p>
           <p className="text-sm text-[#6f7a6b] mt-1">Try a different search or filter</p>
         </div>

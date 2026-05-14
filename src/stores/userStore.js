@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import * as userApi from '../api/userApi';
 import { useUiStore } from './uiStore';
 
-export const useUserStore = create((set, get) => ({
+export const useUserStore = create((set) => ({
   profile: null,
   healthGoal: null,
   isLoading: false,

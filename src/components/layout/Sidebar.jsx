@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, UtensilsCrossed, CalendarDays,
-  BookOpen, BarChart3, Settings, Menu, X, Leaf,
+  BookOpen, BarChart3, Settings, Leaf,
   ChevronLeft, ChevronRight, LogOut, ShieldCheck,
   FileText
 } from 'lucide-react';
@@ -22,6 +22,7 @@ const navItems = [
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const logout = useAuthStore((state) => state.logout);
   const isAdmin = useAuthStore((state) => state.isAdmin);
 
@@ -170,7 +171,7 @@ export default function Sidebar() {
               }`
             }
           >
-            <div className={`p-1.5 rounded-lg transition-colors ${path === useLocation().pathname ? 'bg-[#eaf0e4]' : ''}`}>
+            <div className={`p-1.5 rounded-lg transition-colors ${path === location.pathname ? 'bg-[#eaf0e4]' : ''}`}>
               <Icon size={20} />
             </div>
             <span>{label.split(' ')[0]}</span>

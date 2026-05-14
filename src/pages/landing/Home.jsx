@@ -5,13 +5,6 @@ import {
   Star, CheckCircle, Zap, Shield, Clock, Apple
 } from 'lucide-react';
 
-// Animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
-};
-
 const staggerContainer = {
   animate: {
     transition: {
@@ -422,7 +415,7 @@ export default function Home() {
                   </span>
                 </div>
                 <div className="space-y-3">
-                  {['Monday', 'Tuesday', 'Wednesday'].map((day, i) => (
+                  {['Monday', 'Tuesday', 'Wednesday'].map((day) => (
                     <div key={day} className="flex items-center gap-3 p-3 bg-[#f5fbef] rounded-lg">
                       <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center font-bold text-sm text-[#006e1c]">
                         {day.slice(0, 2)}
@@ -507,7 +500,7 @@ export default function Home() {
             </div>
 
             <p className="text-sm text-white/60 mt-6">
-              14-day free trial • No credit card required • Cancel anytime
+              14-day free trial | No credit card required | Cancel anytime
             </p>
           </motion.div>
         </div>

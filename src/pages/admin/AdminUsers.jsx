@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, Lock, Unlock, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import * as adminApi from '../../api/adminApi';
 import { useUiStore } from '../../stores/uiStore';
 

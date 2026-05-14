@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import {
   Calendar, TrendingUp, ChefHat, Heart, Zap, Shield,
-  Clock, Apple, BarChart3, Sparkles, Filter, Share2,
+  Clock, BarChart3, Sparkles, Share2,
   Bell, Smartphone, Lock, Palette, Cloud
 } from 'lucide-react';
 

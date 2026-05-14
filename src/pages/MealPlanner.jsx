@@ -11,8 +11,6 @@ import TemplateListModal from '../components/planner/TemplateListModal';
 import DayDetailView from '../components/planner/DayDetailView';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
-
 function formatDateLocal(d) {
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -42,31 +40,6 @@ function getWeekLabel(weekOffset) {
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
   return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-}
-
-function calcDayTotals(plan) {
-  let calories = 0, protein = 0, carbs = 0, fat = 0;
-  if (plan?.meals) {
-    for (const meal of plan.meals) {
-      for (const p of meal.portions || []) {
-        calories += p.caloriesKcal || 0;
-        protein += p.proteinG || 0;
-        carbs += p.carbG || 0;
-        fat += p.fatG || 0;
-      }
-    }
-  } else if (plan) {
-    // Fallback for direct portions object
-    mealTypes.forEach((type) => {
-      (plan[type] || []).forEach((p) => {
-        calories += p.caloriesKcal || 0;
-        protein += p.proteinG || 0;
-        carbs += p.carbG || 0;
-        fat += p.fatG || 0;
-      });
-    });
-  }
-  return { calories, protein, carbs, fat };
 }
 
 export default function MealPlanner() {

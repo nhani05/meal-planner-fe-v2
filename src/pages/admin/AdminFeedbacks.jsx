@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Search, ChevronLeft, ChevronRight, Loader2, MessageSquare } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import * as adminApi from '../../api/adminApi';
 import { useUiStore } from '../../stores/uiStore';
 
