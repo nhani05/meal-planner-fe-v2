@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { X, FilePlus, Copy, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export default function PlanCreationModal({ isOpen, onClose, onCreateNew, onUseTemplate }) {
+  const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateNew = async () => {
@@ -34,7 +36,7 @@ export default function PlanCreationModal({ isOpen, onClose, onCreateNew, onUseT
           className="relative bg-white w-full max-w-md rounded-2xl shadow-modal overflow-hidden"
         >
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#eaf0e4]">
-            <h2 className="font-bold text-[#171d16]">Create Plan</h2>
+            <h2 className="font-bold text-[#171d16]">{t('planner.createPlan')}</h2>
             <button
               onClick={onClose}
               disabled={isCreating}
@@ -54,8 +56,8 @@ export default function PlanCreationModal({ isOpen, onClose, onCreateNew, onUseT
                 {isCreating ? <Loader2 size={24} className="animate-spin" /> : <FilePlus size={24} />}
               </div>
               <div>
-                <p className="font-bold text-[#171d16]">{isCreating ? 'Creating plan…' : 'Create from Scratch'}</p>
-                <p className="text-xs text-[#6f7a6b]">Start with an empty meal plan</p>
+                <p className="font-bold text-[#171d16]">{isCreating ? t('planner.creatingPlan') : t('planner.createFromScratch')}</p>
+                <p className="text-xs text-[#6f7a6b]">{t('planner.emptyPlan')}</p>
               </div>
             </button>
 
@@ -68,8 +70,8 @@ export default function PlanCreationModal({ isOpen, onClose, onCreateNew, onUseT
                 <Copy size={24} />
               </div>
               <div>
-                <p className="font-bold text-[#171d16]">Use Template</p>
-                <p className="text-xs text-[#6f7a6b]">Apply a saved meal plan template</p>
+                <p className="font-bold text-[#171d16]">{t('planner.useTemplate')}</p>
+                <p className="text-xs text-[#6f7a6b]">{t('planner.applyTemplate')}</p>
               </div>
             </button>
           </div>

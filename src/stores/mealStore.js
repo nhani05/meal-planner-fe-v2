@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as mealApi from '../api/mealApi';
 import * as dishApi from '../api/dishApi';
 import { useUiStore } from './uiStore';
+import i18n from '../i18n';
 
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
 const dishNameCache = new Map();
@@ -219,7 +220,7 @@ export const useMealStore = create((set, get) => ({
         planDate: date,
       });
       if (targetState === 'todayPlan') set({ todayPlan: res.data });
-      useUiStore.getState().showToast('Plan created successfully', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.planCreated'), 'success');
       return res.data;
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to create plan. Please try again.';
@@ -236,7 +237,7 @@ export const useMealStore = create((set, get) => ({
         if (date) delete next[date];
         return { weekPlans: next, selectedPlan: null, selectedDate: null, dayPortions: emptyPortions(), dayTotals: calcTotals(emptyPortions()) };
       });
-      useUiStore.getState().showToast('Plan deleted', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.planDeleted'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to delete plan';
       useUiStore.getState().showToast(msg, 'error');
@@ -330,7 +331,7 @@ export const useMealStore = create((set, get) => ({
         dailyTotals: calcTotals(state.portions),
         isAdding: false,
       }));
-      useUiStore.getState().showToast('Portion added', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.portionAdded'), 'success');
     } catch (err) {
       set({ isAdding: false });
       const msg = err.response?.data?.message || err.message || 'Failed to add portion';
@@ -358,7 +359,7 @@ export const useMealStore = create((set, get) => ({
         dayTotals: calcTotals(state.dayPortions),
         isAdding: false,
       }));
-      useUiStore.getState().showToast(`${portionsList.length} portion${portionsList.length > 1 ? 's' : ''} added`, 'success');
+      useUiStore.getState().showToast(i18n.t('toast.portionsAdded', { count: portionsList.length }), 'success');
     } catch (err) {
       set({ isAdding: false });
       const msg = err.response?.data?.message || err.message || 'Failed to add portions';
@@ -382,7 +383,7 @@ export const useMealStore = create((set, get) => ({
       await mealApi.deletePortion(planId, mealType, portionId);
       await get()._fetchDayPortions(planId, mealType);
       set((state) => ({ dayTotals: calcTotals(state.dayPortions) }));
-      useUiStore.getState().showToast('Portion removed', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.portionRemoved'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to remove portion';
       useUiStore.getState().showToast(msg, 'error');
@@ -405,14 +406,14 @@ export const useMealStore = create((set, get) => ({
 
   saveTemplate: async (templateName, sourcePlanId) => {
     if (!templateName.trim()) {
-      useUiStore.getState().showToast('Template name is required', 'error');
+      useUiStore.getState().showToast(i18n.t('toast.templateNameRequired'), 'error');
       return false;
     }
     set({ isSavingTemplate: true });
     try {
       await mealApi.createTemplate({ templateName, sourcePlanId });
       set({ isSavingTemplate: false });
-      useUiStore.getState().showToast('Template saved', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.templateSaved'), 'success');
       return true;
     } catch (err) {
       set({ isSavingTemplate: false });
@@ -424,12 +425,12 @@ export const useMealStore = create((set, get) => ({
 
   updateTemplateName: async (templateId, templateName) => {
     if (!templateName.trim()) {
-      useUiStore.getState().showToast('Template name is required', 'error');
+      useUiStore.getState().showToast(i18n.t('toast.templateNameRequired'), 'error');
       return false;
     }
     try {
       await mealApi.updateTemplate(templateId, { templateName });
-      useUiStore.getState().showToast('Template updated', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.templateUpdated'), 'success');
       return true;
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to update template';
@@ -444,7 +445,7 @@ export const useMealStore = create((set, get) => ({
       set((state) => ({
         templates: state.templates.filter((t) => (t.templateId || t.id) !== templateId),
       }));
-      useUiStore.getState().showToast('Template deleted', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.templateDeleted'), 'success');
       return true;
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to delete template';
@@ -469,7 +470,7 @@ export const useMealStore = create((set, get) => ({
       await mealApi.deletePortion(planId, mealType, portionId);
       await get().fetchPortions(planId, mealType);
       set((state) => ({ dailyTotals: calcTotals(state.portions) }));
-      useUiStore.getState().showToast('Portion removed', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.portionRemoved'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Failed to remove portion';
       useUiStore.getState().showToast(msg, 'error');

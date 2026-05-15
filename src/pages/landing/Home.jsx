@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowRight, Calendar, ChefHat, Heart, TrendingUp, Users,
   Star, CheckCircle, Zap, Shield, Clock, Apple
@@ -83,65 +84,66 @@ const Step = ({ number, title, description, icon: Icon }) => (
 );
 
 export default function Home() {
+  const { t } = useTranslation();
   const features = [
     {
       icon: Calendar,
-      title: 'Smart Meal Planning',
-      description: 'Create personalized weekly meal plans tailored to your dietary preferences and goals.'
+      title: t('landing.featureCards.smartPlanningTitle'),
+      description: t('landing.featureCards.smartPlanningText')
     },
     {
       icon: TrendingUp,
-      title: 'Nutrition Tracking',
-      description: 'Monitor calories, macros, and micronutrients in real-time with detailed analytics.'
+      title: t('landing.featureCards.trackingTitle'),
+      description: t('landing.featureCards.trackingText')
     },
     {
       icon: ChefHat,
-      title: 'Recipe Discovery',
-      description: 'Browse thousands of healthy recipes with detailed nutritional information.'
+      title: t('landing.featureCards.discoveryTitle'),
+      description: t('landing.featureCards.discoveryText')
     },
     {
       icon: Heart,
-      title: 'Health Goals',
-      description: 'Set and track your health goals with personalized recommendations.'
+      title: t('landing.featureCards.goalsTitle'),
+      description: t('landing.featureCards.goalsText')
     },
     {
       icon: Zap,
-      title: 'Quick Templates',
-      description: 'Save time with customizable meal plan templates for every lifestyle.'
+      title: t('landing.featureCards.templatesTitle'),
+      description: t('landing.featureCards.templatesText')
     },
     {
       icon: Shield,
-      title: 'Dietary Preferences',
-      description: 'Support for vegetarian, vegan, keto, and other special diets.'
+      title: t('landing.featureCards.preferencesTitle'),
+      description: t('landing.featureCards.preferencesText')
     }
   ];
 
   const testimonials = [
     {
-      quote: "NutriPlan has completely transformed how I eat. I've lost 20 pounds and feel more energetic than ever!",
+      quote: t('landing.testimonials.sarahQuote'),
       author: "Sarah Johnson",
-      role: "Fitness Enthusiast",
+      role: t('landing.testimonials.sarahRole'),
       rating: 5
     },
     {
-      quote: "As a busy professional, I never had time to plan meals. Now I eat healthy every day without the stress.",
+      quote: t('landing.testimonials.michaelQuote'),
       author: "Michael Chen",
-      role: "Software Engineer",
+      role: t('landing.testimonials.michaelRole'),
       rating: 5
     },
     {
-      quote: "The recipe recommendations are spot on! My whole family loves the meals I prepare now.",
+      quote: t('landing.testimonials.emilyQuote'),
       author: "Emily Rodriguez",
-      role: "Working Mom",
+      role: t('landing.testimonials.emilyRole'),
       rating: 5
     }
   ];
 
   const stats = [
-    { value: '50K+', label: 'Active Users', icon: Users },
-    { value: '10K+', label: 'Recipes', icon: ChefHat },
-    { value: '1M+', label: 'Meals Planned', icon: Apple },
-    { value: '98%', label: 'Satisfaction', icon: Star }
+    { value: '50K+', label: t('landing.statsUsers'), icon: Users },
+    { value: '10K+', label: t('landing.statsRecipes'), icon: ChefHat },
+    { value: '1M+', label: t('landing.statsMeals'), icon: Apple },
+    { value: '98%', label: t('landing.statsSatisfaction'), icon: Star }
   ];
 
   return (
@@ -168,16 +170,16 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-[#006e1c]/10 rounded-full text-[#006e1c] text-sm font-semibold mb-6"
               >
                 <Star size={16} className="fill-[#006e1c]" />
-                Trusted by 50,000+ users worldwide
+                {t('landing.trusted')}
               </motion.div>
 
               <h1 className="text-5xl lg:text-6xl font-black text-[#171d16] leading-tight mb-6">
-                Plan Your Meals,<br />
-                <span className="text-[#006e1c]">Transform</span> Your Health
+                {t('landing.heroTitleStart')}<br />
+                <span className="text-[#006e1c]">{t('landing.heroTitleHighlight')}</span> {t('landing.heroTitleEnd')}
               </h1>
 
               <p className="text-lg text-[#6f7a6b] mb-8 max-w-lg">
-                NutriPlan helps you create personalized meal plans, track nutrition, and achieve your health goals with smart recommendations and beautiful analytics.
+                {t('landing.heroText')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -185,25 +187,25 @@ export default function Home() {
                   to="/register"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#006e1c] text-white font-semibold rounded-xl hover:bg-[#005a17] transition-colors shadow-lg shadow-[#006e1c]/20"
                 >
-                  Start Free Trial
+                  {t('landing.startTrial')}
                   <ArrowRight size={20} />
                 </Link>
                 <Link
                   to="/features"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#006e1c] font-semibold rounded-xl border-2 border-[#006e1c]/20 hover:border-[#006e1c] transition-colors"
                 >
-                  Explore Features
+                  {t('landing.exploreFeatures')}
                 </Link>
               </div>
 
               <div className="flex items-center gap-6 mt-8 text-sm text-[#6f7a6b]">
                 <div className="flex items-center gap-2">
                   <CheckCircle size={18} className="text-[#006e1c]" />
-                  Free 14-day trial
+                  {t('landing.freeTrial')}
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle size={18} className="text-[#006e1c]" />
-                  No credit card required
+                  {t('landing.noCard')}
                 </div>
               </div>
             </motion.div>
@@ -227,14 +229,14 @@ export default function Home() {
                       <div className="w-8 h-8 rounded-lg bg-[#006e1c]/20 flex items-center justify-center mb-2">
                         <Calendar size={16} className="text-[#006e1c]" />
                       </div>
-                      <p className="text-xs text-[#6f7a6b]">Weekly Plan</p>
+                      <p className="text-xs text-[#6f7a6b]">{t('landing.mock.weeklyPlan')}</p>
                       <p className="font-bold text-[#171d16]">21 meals</p>
                     </div>
                     <div className="bg-[#f5fbef] rounded-xl p-4">
                       <div className="w-8 h-8 rounded-lg bg-[#0061a4]/20 flex items-center justify-center mb-2">
                         <TrendingUp size={16} className="text-[#0061a4]" />
                       </div>
-                      <p className="text-xs text-[#6f7a6b]">Calories</p>
+                      <p className="text-xs text-[#6f7a6b]">{t('landing.mock.calories')}</p>
                       <p className="font-bold text-[#171d16]">1,850 kcal</p>
                     </div>
                   </div>
@@ -244,8 +246,8 @@ export default function Home() {
                         <Apple size={20} className="text-white" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-[#171d16]">Breakfast</p>
-                        <p className="text-xs text-[#6f7a6b]">Oatmeal with berries</p>
+                        <p className="font-semibold text-sm text-[#171d16]">{t('enums.mealType.breakfast')}</p>
+                        <p className="text-xs text-[#6f7a6b]">{t('landing.mock.breakfastFood')}</p>
                       </div>
                       <span className="ml-auto text-sm font-semibold text-[#006e1c]">350 kcal</span>
                     </div>
@@ -254,8 +256,8 @@ export default function Home() {
                         <ChefHat size={20} className="text-white" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-[#171d16]">Lunch</p>
-                        <p className="text-xs text-[#6f7a6b]">Grilled chicken salad</p>
+                        <p className="font-semibold text-sm text-[#171d16]">{t('enums.mealType.lunch')}</p>
+                        <p className="text-xs text-[#6f7a6b]">{t('landing.mock.lunchFood')}</p>
                       </div>
                       <span className="ml-auto text-sm font-semibold text-[#0061a4]">520 kcal</span>
                     </div>
@@ -274,8 +276,8 @@ export default function Home() {
                     <Heart size={16} className="text-[#006e1c]" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-[#171d16]">Goal Progress</p>
-                    <p className="text-xs text-[#6f7a6b]">85% completed</p>
+                    <p className="text-xs font-semibold text-[#171d16]">{t('landing.mock.goalProgress')}</p>
+                    <p className="text-xs text-[#6f7a6b]">{t('landing.mock.completed')}</p>
                   </div>
                 </div>
               </motion.div>
@@ -290,8 +292,8 @@ export default function Home() {
                     <Clock size={16} className="text-[#f59e0b]" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-[#171d16]">Time Saved</p>
-                    <p className="text-xs text-[#6f7a6b]">5 hours/week</p>
+                    <p className="text-xs font-semibold text-[#171d16]">{t('landing.mock.timeSaved')}</p>
+                    <p className="text-xs text-[#6f7a6b]">{t('landing.mock.hoursWeek')}</p>
                   </div>
                 </div>
               </motion.div>
@@ -340,10 +342,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl lg:text-4xl font-black text-[#171d16] mb-4">
-              Everything you need to <span className="text-[#006e1c]">eat healthier</span>
+              {t('landing.everythingTitle')} <span className="text-[#006e1c]">{t('landing.eatHealthier')}</span>
             </h2>
             <p className="text-lg text-[#6f7a6b] max-w-2xl mx-auto">
-              Powerful features designed to make meal planning simple, enjoyable, and effective.
+              {t('landing.featuresText')}
             </p>
           </motion.div>
 
@@ -369,30 +371,30 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <h2 className="text-3xl lg:text-4xl font-black text-[#171d16] mb-6">
-                Get started in <span className="text-[#006e1c]">3 easy steps</span>
+                {t('landing.stepsTitle')} <span className="text-[#006e1c]">{t('landing.stepsHighlight')}</span>
               </h2>
               <p className="text-[#6f7a6b] mb-8">
-                From signup to your first meal plan - we have made the process simple and intuitive.
+                {t('landing.stepsText')}
               </p>
 
               <div className="space-y-0">
                 <Step
                   number={1}
                   icon={Users}
-                  title="Create Your Profile"
-                  description="Set up your health goals, dietary preferences, and personal information."
+                  title={t('landing.steps.profileTitle')}
+                  description={t('landing.steps.profileText')}
                 />
                 <Step
                   number={2}
                   icon={Calendar}
-                  title="Generate Your Plan"
-                  description="Our AI creates a personalized meal plan based on your preferences and goals."
+                  title={t('landing.steps.planTitle')}
+                  description={t('landing.steps.planText')}
                 />
                 <Step
                   number={3}
                   icon={ChefHat}
-                  title="Enjoy Healthy Meals"
-                  description="Follow your plan, track your progress, and adjust as needed."
+                  title={t('landing.steps.enjoyTitle')}
+                  description={t('landing.steps.enjoyText')}
                 />
               </div>
             </motion.div>
@@ -407,22 +409,22 @@ export default function Home() {
                 <div className="flex items-center gap-3 pb-4 border-b border-[#becab9]/30">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#006e1c] to-[#4caf50]" />
                   <div>
-                    <p className="font-semibold text-[#171d16]">John's Meal Plan</p>
-                    <p className="text-xs text-[#6f7a6b]">Week of Jan 15-21</p>
+                    <p className="font-semibold text-[#171d16]">{t('landing.mock.johnPlan')}</p>
+                    <p className="text-xs text-[#6f7a6b]">{t('landing.mock.weekOf')}</p>
                   </div>
                   <span className="ml-auto px-3 py-1 bg-[#006e1c]/10 text-[#006e1c] text-xs font-semibold rounded-full">
-                    Active
+                    {t('common.active')}
                   </span>
                 </div>
                 <div className="space-y-3">
-                  {['Monday', 'Tuesday', 'Wednesday'].map((day) => (
+                  {[t('landing.weekdays.monday'), t('landing.weekdays.tuesday'), t('landing.weekdays.wednesday')].map((day) => (
                     <div key={day} className="flex items-center gap-3 p-3 bg-[#f5fbef] rounded-lg">
                       <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center font-bold text-sm text-[#006e1c]">
                         {day.slice(0, 2)}
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#171d16]">{day}</p>
-                        <p className="text-xs text-[#6f7a6b]">3 meals planned</p>
+                        <p className="text-xs text-[#6f7a6b]">{t('landing.mock.mealsPlanned')}</p>
                       </div>
                       <CheckCircle size={18} className="text-[#006e1c]" />
                     </div>
@@ -444,10 +446,10 @@ export default function Home() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl lg:text-4xl font-black text-[#171d16] mb-4">
-              Loved by <span className="text-[#006e1c]">thousands</span>
+              {t('landing.lovedTitle')} <span className="text-[#006e1c]">{t('landing.lovedHighlight')}</span>
             </h2>
             <p className="text-lg text-[#6f7a6b]">
-              See what our users have to say about their NutriPlan experience.
+              {t('landing.lovedText')}
             </p>
           </motion.div>
 
@@ -477,10 +479,10 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl lg:text-4xl font-black text-white mb-4">
-              Ready to transform your eating habits?
+              {t('landing.ctaTitle')}
             </h2>
             <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
-              Join 50,000+ users who are already eating healthier with NutriPlan. Start your free trial today.
+              {t('landing.ctaText')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -488,19 +490,19 @@ export default function Home() {
                 to="/register"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#006e1c] font-bold rounded-xl hover:bg-[#f5fbef] transition-colors shadow-lg"
               >
-                Get Started Free
+                {t('landing.getStartedFree')}
                 <ArrowRight size={20} />
               </Link>
               <Link
                 to="/contact"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#006e1c] text-white font-bold rounded-xl border-2 border-white/30 hover:bg-[#005a17] transition-colors"
               >
-                Contact Sales
+                {t('landing.contactSales')}
               </Link>
             </div>
 
             <p className="text-sm text-white/60 mt-6">
-              14-day free trial | No credit card required | Cancel anytime
+              {t('landing.ctaFinePrint')}
             </p>
           </motion.div>
         </div>

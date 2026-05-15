@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import * as adminApi from '../../api/adminApi';
 import { useUiStore } from '../../stores/uiStore';
+import i18n from '../../i18n';
 
 const statusColors = {
   pending: 'bg-[#ffecb3] text-[#ff8f00]',
@@ -46,7 +47,7 @@ export default function AdminFeedbacks() {
     try {
       await adminApi.updateFeedbackStatus(id, status);
       setFeedbacks((prev) => prev.map((f) => (f.id === id ? { ...f, status } : f)));
-      useUiStore.getState().showToast('Status updated', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.statusUpdated'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Update failed';
       useUiStore.getState().showToast(msg, 'error');

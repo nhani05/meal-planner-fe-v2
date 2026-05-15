@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import * as userApi from '../api/userApi';
 import { useUiStore } from './uiStore';
+import i18n from '../i18n';
 
 export const useUserStore = create((set) => ({
   profile: null,
@@ -30,7 +31,7 @@ export const useUserStore = create((set) => ({
     try {
       const res = await userApi.saveHealthProfile(accountId, data);
       set({ profile: res.data, isLoading: false });
-      useUiStore.getState().showToast('Profile updated successfully', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.profileUpdated'), 'success');
     } catch (err) {
       set({ isLoading: false });
       const msg = err.response?.data?.message || err.message || 'Failed to update profile';
@@ -59,7 +60,7 @@ export const useUserStore = create((set) => ({
     try {
       const res = await userApi.saveHealthGoal(accountId, data);
       set({ healthGoal: res.data, isLoading: false });
-      useUiStore.getState().showToast('Health goal updated successfully', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.healthGoalUpdated'), 'success');
     } catch (err) {
       set({ isLoading: false });
       const msg = err.response?.data?.message || err.message || 'Failed to update health goal';

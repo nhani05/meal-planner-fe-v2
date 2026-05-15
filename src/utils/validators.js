@@ -1,57 +1,57 @@
 import { z } from 'zod';
 
-export const loginSchema = z.object({
-  username: z.string().min(4, 'Username must be at least 4 characters'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+export const createLoginSchema = (t) => z.object({
+  username: z.string().min(4, t('validation.usernameMin')),
+  password: z.string().min(6, t('validation.passwordMin')),
 });
 
-export const registerSchema = z
+export const createRegisterSchema = (t) => z
   .object({
-    username: z.string().min(4, 'Username must be at least 4 characters'),
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    passwordConfirm: z.string().min(6, 'Confirm password must be at least 6 characters'),
+    username: z.string().min(4, t('validation.usernameMin')),
+    email: z.string().email(t('validation.invalidEmail')),
+    password: z.string().min(6, t('validation.passwordMin')),
+    passwordConfirm: z.string().min(6, t('validation.confirmPasswordMin')),
   })
   .refine((data) => data.password === data.passwordConfirm, {
-    message: 'Passwords do not match',
+    message: t('validation.passwordsMismatch'),
     path: ['passwordConfirm'],
   });
 
-export const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address'),
+export const createForgotPasswordSchema = (t) => z.object({
+  email: z.string().email(t('validation.invalidEmail')),
 });
 
-export const resetPasswordSchema = z.object({
-  token: z.string().min(6, 'OTP must be at least 6 characters'),
-  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
+export const createResetPasswordSchema = (t) => z.object({
+  token: z.string().min(6, t('validation.otpMin')),
+  newPassword: z.string().min(6, t('validation.passwordMin')),
 });
 
-export const changePasswordSchema = z
+export const createChangePasswordSchema = (t) => z
   .object({
-    oldPassword: z.string().min(6, 'Old password must be at least 6 characters'),
-    newPassword: z.string().min(6, 'New password must be at least 6 characters'),
-    confirmNewPassword: z.string().min(6, 'Confirm password must be at least 6 characters'),
+    oldPassword: z.string().min(6, t('validation.oldPasswordMin')),
+    newPassword: z.string().min(6, t('validation.newPasswordMin')),
+    confirmNewPassword: z.string().min(6, t('validation.confirmNewPasswordMin')),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
-    message: 'Passwords do not match',
+    message: t('validation.passwordsMismatch'),
     path: ['confirmNewPassword'],
   });
 
-export const healthProfileSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  age: z.coerce.number().int().min(1, 'Age must be at least 1').max(120, 'Age must be at most 120'),
+export const createHealthProfileSchema = (t) => z.object({
+  fullName: z.string().min(1, t('validation.fullNameRequired')),
+  age: z.coerce.number().int().min(1, t('validation.ageMin')).max(120, t('validation.ageMax')),
   gender: z.enum(['male', 'female', 'other']),
-  heightCm: z.coerce.number().min(50, 'Height must be at least 50 cm').max(300, 'Height must be at most 300 cm'),
-  weightKg: z.coerce.number().min(20, 'Weight must be at least 20 kg').max(500, 'Weight must be at most 500 kg'),
-  avatarUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+  heightCm: z.coerce.number().min(50, t('validation.heightMin')).max(300, t('validation.heightMax')),
+  weightKg: z.coerce.number().min(20, t('validation.weightMin')).max(500, t('validation.weightMax')),
+  avatarUrl: z.string().url(t('validation.invalidUrl')).optional().or(z.literal('')),
 });
 
-export const healthGoalSchema = z.object({
+export const createHealthGoalSchema = (t) => z.object({
   goalType: z.enum(['weight_loss', 'muscle_gain', 'maintenance', 'endurance']),
   activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']),
   targetWeightKg: z.coerce.number().min(20).max(500).optional(),
-  dailyCaloriesKcal: z.coerce.number().min(500, 'Daily calories must be at least 500').max(10000, 'Daily calories must be at most 10000'),
-  proteinGDay: z.coerce.number().min(0, 'Protein must be at least 0'),
-  carbGDay: z.coerce.number().min(0, 'Carbs must be at least 0'),
-  fatGDay: z.coerce.number().min(0, 'Fat must be at least 0'),
+  dailyCaloriesKcal: z.coerce.number().min(500, t('validation.dailyCaloriesMin')).max(10000, t('validation.dailyCaloriesMax')),
+  proteinGDay: z.coerce.number().min(0, t('validation.proteinMin')),
+  carbGDay: z.coerce.number().min(0, t('validation.carbsMin')),
+  fatGDay: z.coerce.number().min(0, t('validation.fatMin')),
 });

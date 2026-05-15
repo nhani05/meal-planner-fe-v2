@@ -6,17 +6,20 @@ import {
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../components/common/LanguageSwitcher';
 
 const adminNav = [
-  { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/admin/users', label: 'Users', icon: Users },
-  { path: '/admin/dishes', label: 'Dishes', icon: UtensilsCrossed },
-  { path: '/admin/categories', label: 'Categories', icon: Tag },
-  { path: '/admin/feedbacks', label: 'Feedbacks', icon: MessageSquare },
-  { path: '/admin/audit-logs', label: 'Audit Logs', icon: History },
+  { path: '/admin', labelKey: 'nav.dashboard', icon: LayoutDashboard },
+  { path: '/admin/users', labelKey: 'nav.users', icon: Users },
+  { path: '/admin/dishes', labelKey: 'nav.dishes', icon: UtensilsCrossed },
+  { path: '/admin/categories', labelKey: 'nav.categories', icon: Tag },
+  { path: '/admin/feedbacks', labelKey: 'nav.feedbacks', icon: MessageSquare },
+  { path: '/admin/audit-logs', labelKey: 'nav.auditLogs', icon: History },
 ];
 
 export default function AdminLayout() {
+  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,7 +48,7 @@ export default function AdminLayout() {
             <ShieldCheck size={20} className="text-white" />
           </div>
           <div>
-            <p className="font-black text-[#171d16] text-lg tracking-tighter">Admin</p>
+            <p className="font-black text-[#171d16] text-lg tracking-tighter">{t('nav.admin')}</p>
             <p className="text-[10px] font-bold text-[#6f7a6b] uppercase tracking-widest">Panel</p>
           </div>
         </div>
@@ -54,12 +57,12 @@ export default function AdminLayout() {
           onClick={() => { navigate('/dashboard'); setMobileOpen(false); }}
           className="mx-4 mt-4 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-[#6f7a6b] hover:text-[#006e1c] hover:bg-[#f5fbef] transition-all"
         >
-          <ArrowLeft size={16} /> Back to App
+          <ArrowLeft size={16} /> {t('nav.backToApp')}
         </button>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {adminNav.map(({ path, label, icon: Icon }) => {
+          {adminNav.map(({ path, labelKey, icon: Icon }) => {
             const isActive = location.pathname === path;
             return (
               <NavLink
@@ -74,7 +77,7 @@ export default function AdminLayout() {
                 }`}
               >
                 <Icon size={20} className={isActive ? 'text-[#006e1c]' : ''} />
-                <span>{label}</span>
+                <span>{t(labelKey)}</span>
                 {isActive && (
                   <motion.div layoutId="admin-nav-active" className="absolute left-0 w-1 h-6 bg-[#006e1c] rounded-r-full" />
                 )}
@@ -89,8 +92,9 @@ export default function AdminLayout() {
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[#ba1a1a] hover:bg-[#ffdad6] transition-all font-bold text-sm"
           >
-            <LogOut size={20} /> Logout
+            <LogOut size={20} /> {t('nav.logout')}
           </button>
+          <LanguageSwitcher className="mt-3 w-full" />
         </div>
       </aside>
 

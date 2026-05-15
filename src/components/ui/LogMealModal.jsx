@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { X, Search, Zap, Flame, Minus, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDishStore } from '../../stores/dishStore';
+import { useTranslation } from 'react-i18next';
 
 export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedDish, setSelectedDish] = useState(null);
   const [quantityG, setQuantityG] = useState(100);
@@ -33,7 +35,7 @@ export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
 
   if (!isOpen) return null;
 
-  const typeLabel = mealType.charAt(0).toUpperCase() + mealType.slice(1);
+  const typeLabel = t(`enums.mealType.${mealType}`);
 
   return (
     <AnimatePresence>
@@ -54,8 +56,8 @@ export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#eaf0e4]">
             <div>
-              <h2 className="font-bold text-[#171d16]">Log a Meal</h2>
-              <p className="text-[10px] font-bold text-[#6f7a6b] uppercase tracking-wider mt-0.5">Adding to {typeLabel}</p>
+              <h2 className="font-bold text-[#171d16]">{t('meals.logMeal')}</h2>
+              <p className="text-[10px] font-bold text-[#6f7a6b] uppercase tracking-wider mt-0.5">{t('meals.addingTo', { meal: typeLabel })}</p>
             </div>
             <button onClick={onClose} className="p-1 rounded-lg hover:bg-[#f0f6ea] text-[#6f7a6b] transition-colors">
               <X size={20} />
@@ -65,12 +67,12 @@ export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
           <div className="p-6 space-y-6">
             {/* Search */}
             <div className="space-y-4">
-              <label className="text-xs font-bold text-[#6f7a6b] uppercase tracking-wider">Find Dish</label>
+              <label className="text-xs font-bold text-[#6f7a6b] uppercase tracking-wider">{t('meals.findDish')}</label>
               <div className="relative">
                 <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6f7a6b]" />
                 <input
                   type="text"
-                  placeholder="Search chicken, salad, rice..."
+                  placeholder={t('meals.searchFood')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#f0f6ea] border-transparent focus:bg-white focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 transition-all text-sm outline-none"
@@ -108,7 +110,7 @@ export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
             {/* Quantity */}
             {selectedDish && (
               <div className="space-y-3">
-                <label className="text-xs font-bold text-[#6f7a6b] uppercase tracking-wider">Quantity (grams)</label>
+                <label className="text-xs font-bold text-[#6f7a6b] uppercase tracking-wider">{t('meals.quantityGrams')}</label>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setQuantityG((q) => Math.max(50, q - 50))}
@@ -140,7 +142,7 @@ export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
             <div className="text-left">
               {selectedDish && (
                 <p className="text-xs font-semibold text-[#3f4a3c]">
-                  Selected: <span className="text-[#006e1c]">{selectedDish.name}</span> ({quantityG}g)
+                  {t('meals.selected')} <span className="text-[#006e1c]">{selectedDish.name}</span> ({quantityG}g)
                 </p>
               )}
             </div>
@@ -153,7 +155,7 @@ export default function LogMealModal({ isOpen, onClose, mealType, onConfirm }) {
                   : 'bg-[#becab9] text-white cursor-not-allowed opacity-50'
               }`}
             >
-              Add to {typeLabel}
+              {t('meals.addToMeal', { meal: typeLabel })}
             </button>
           </div>
         </motion.div>

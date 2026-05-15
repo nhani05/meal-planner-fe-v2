@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Search, Lock, Unlock, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import * as adminApi from '../../api/adminApi';
 import { useUiStore } from '../../stores/uiStore';
+import i18n from '../../i18n';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -40,7 +41,7 @@ export default function AdminUsers() {
     try {
       const res = lock ? await adminApi.lockUser(id) : await adminApi.unlockUser(id);
       setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: res.data.status } : u)));
-      useUiStore.getState().showToast(`User ${lock ? 'locked' : 'unlocked'}`, 'success');
+      useUiStore.getState().showToast(i18n.t(lock ? 'toast.userLocked' : 'toast.userUnlocked'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Action failed';
       useUiStore.getState().showToast(msg, 'error');
@@ -55,7 +56,7 @@ export default function AdminUsers() {
     try {
       await adminApi.deleteUser(id);
       setUsers((prev) => prev.filter((u) => u.id !== id));
-      useUiStore.getState().showToast('User deleted', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.userDeleted'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Delete failed';
       useUiStore.getState().showToast(msg, 'error');

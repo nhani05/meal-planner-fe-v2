@@ -3,8 +3,10 @@ import RecipeCard from '../components/ui/RecipeCard';
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useDishStore } from '../stores/dishStore';
 import { useAuthStore } from '../stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 export default function Recipes() {
+  const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
   const accountId = user?.id;
 
@@ -56,14 +58,14 @@ export default function Recipes() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6f7a6b]" />
           <input
             type="text"
-            placeholder="Search recipes..."
+            placeholder={t('recipes.searchPlaceholder')}
             value={search}
             onChange={handleSearchChange}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#becab9] text-sm text-[#171d16] placeholder-[#6f7a6b] focus:outline-none focus:border-[#4caf50] focus:ring-2 transition"
           />
         </div>
         <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#becab9] text-sm text-[#3f4a3c] font-medium hover:bg-[#eaf0e4] transition-colors">
-          <SlidersHorizontal size={15} /> Filters
+          <SlidersHorizontal size={15} /> {t('recipes.filters')}
         </button>
       </div>
 
@@ -76,7 +78,7 @@ export default function Recipes() {
               : 'bg-white border border-[#becab9] text-[#3f4a3c] hover:bg-[#eaf0e4]'
           }`}
         >
-          All
+          {t('common.all')}
         </button>
         {categories.map((cat) => (
           <button
@@ -94,7 +96,7 @@ export default function Recipes() {
       </div>
 
       <p className="text-xs text-[#6f7a6b]">
-        Showing <strong className="text-[#171d16]">{dishes.length}</strong> of {totalElements} recipes
+        {t('recipes.showing')} <strong className="text-[#171d16]">{dishes.length}</strong> {t('recipes.ofRecipes', { count: totalElements })}
       </p>
 
       {isLoading ? (
@@ -115,8 +117,8 @@ export default function Recipes() {
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <Search size={48} className="mb-4 text-[#6f7a6b]" />
-          <p className="font-semibold text-[#171d16]">No recipes found</p>
-          <p className="text-sm text-[#6f7a6b] mt-1">Try a different search or filter</p>
+          <p className="font-semibold text-[#171d16]">{t('recipes.noRecipes')}</p>
+          <p className="text-sm text-[#6f7a6b] mt-1">{t('recipes.tryDifferent')}</p>
         </div>
       )}
 

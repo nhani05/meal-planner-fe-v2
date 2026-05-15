@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   RadarChart, PolarGrid, PolarAngleAxis, Radar,
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 const mockWeeklyCalories = [
   { day: 'Mon', calories: 1800 },
@@ -22,26 +23,26 @@ const mockNutrition = {
 
 const mockUser = { streak: 0 };
 
-const radarData = [
-  { subject: 'Protein', A: 85 },
-  { subject: 'Carbs', A: 78 },
-  { subject: 'Fat', A: 68 },
-  { subject: 'Fiber', A: 60 },
-  { subject: 'Vitamins', A: 72 },
-  { subject: 'Hydration', A: 75 },
-];
-
 export default function Analytics() {
+  const { t } = useTranslation();
   const { protein, carbs, fat } = mockNutrition;
+  const radarData = [
+    { subject: t('dashboard.protein'), A: 85 },
+    { subject: t('dashboard.carbs'), A: 78 },
+    { subject: t('dashboard.fat'), A: 68 },
+    { subject: t('analyticsPage.fiber'), A: 60 },
+    { subject: t('analyticsPage.vitamins'), A: 72 },
+    { subject: t('analyticsPage.hydration'), A: 75 },
+  ];
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Avg. Daily Calories', value: '1,834', sub: 'This week', color: '#4caf50' },
-          { label: 'Goal Adherence', value: '87%', sub: 'Last 7 days', color: '#0061a4' },
-          { label: 'Best Streak', value: `${mockUser.streak} days`, sub: 'Current streak', color: '#a63360' },
+          { label: t('analyticsPage.avgDailyCalories'), value: '1,834', sub: t('analyticsPage.thisWeek'), color: '#4caf50' },
+          { label: t('analyticsPage.goalAdherence'), value: '87%', sub: t('analyticsPage.last7Days'), color: '#0061a4' },
+          { label: t('analyticsPage.bestStreak'), value: `${mockUser.streak} ${t('dashboard.days')}`, sub: t('analyticsPage.currentStreak'), color: '#a63360' },
         ].map(({ label, value, sub, color }) => (
           <div key={label} className="bg-white rounded-xl border border-[#becab9] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] p-5 text-center">
             <p className="text-2xl font-bold" style={{ color }}>{value}</p>
@@ -53,7 +54,7 @@ export default function Analytics() {
 
       {/* Area chart */}
       <div className="bg-white rounded-xl border border-[#becab9] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] p-6">
-        <h3 className="font-bold text-[#171d16] text-sm mb-4">Calorie Trend — This Week</h3>
+        <h3 className="font-bold text-[#171d16] text-sm mb-4">{t('analyticsPage.calorieTrend')}</h3>
         <ResponsiveContainer width="100%" height={200}>
           <AreaChart data={mockWeeklyCalories}>
             <defs>
@@ -83,14 +84,14 @@ export default function Analytics() {
       {/* Macro progress + radar */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-[#becab9] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] p-6 space-y-4">
-          <h3 className="font-bold text-[#171d16] text-sm">Macronutrient Breakdown</h3>
-          <NutritionBar label="Protein" current={protein.current} target={protein.target} color="#4caf50" />
-          <NutritionBar label="Carbohydrates" current={carbs.current} target={carbs.target} color="#33a0fd" />
-          <NutritionBar label="Fat" current={fat.current} target={fat.target} color="#f26f9d" />
+          <h3 className="font-bold text-[#171d16] text-sm">{t('analyticsPage.macroBreakdown')}</h3>
+          <NutritionBar label={t('dashboard.protein')} current={protein.current} target={protein.target} color="#4caf50" />
+          <NutritionBar label={t('dashboard.carbohydrates')} current={carbs.current} target={carbs.target} color="#33a0fd" />
+          <NutritionBar label={t('dashboard.fat')} current={fat.current} target={fat.target} color="#f26f9d" />
         </div>
 
         <div className="bg-white rounded-xl border border-[#becab9] shadow-[0px_2px_4px_rgba(0,0,0,0.05)] p-6">
-          <h3 className="font-bold text-[#171d16] text-sm mb-4">Nutrition Score</h3>
+          <h3 className="font-bold text-[#171d16] text-sm mb-4">{t('analyticsPage.nutritionScore')}</h3>
           <ResponsiveContainer width="100%" height={200}>
             <RadarChart data={radarData}>
               <PolarGrid stroke="#eaf0e4" />

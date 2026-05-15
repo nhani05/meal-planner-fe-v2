@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Leaf, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 export default function LandingNavbar() {
+  const { t } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -17,10 +20,10 @@ export default function LandingNavbar() {
   }, []);
 
   const navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/features', label: 'Features' },
-    { path: '/about', label: 'About' },
-    { path: '/contact', label: 'Contact' },
+    { path: '/', labelKey: 'nav.home' },
+    { path: '/features', labelKey: 'nav.features' },
+    { path: '/about', labelKey: 'nav.about' },
+    { path: '/contact', labelKey: 'nav.contact' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -45,7 +48,7 @@ export default function LandingNavbar() {
                 Nutri<span className="text-[#006e1c]">Plan</span>
               </span>
               <p className="text-[10px] font-bold text-[#6f7a6b] uppercase tracking-widest leading-none mt-0.5">
-                Live Healthy
+                {t('brand.tagline')}
               </p>
             </div>
           </Link>
@@ -62,7 +65,7 @@ export default function LandingNavbar() {
                     : 'text-[#171d16] hover:text-[#006e1c]'
                 }`}
               >
-                {link.label}
+                {t(link.labelKey)}
                 {isActive(link.path) && (
                   <motion.div
                     layoutId="navbar-active"
@@ -79,13 +82,14 @@ export default function LandingNavbar() {
               to="/login"
               className="px-4 py-2 text-[#006e1c] font-semibold text-sm hover:bg-[#006e1c]/10 rounded-lg transition-colors"
             >
-              Sign In
+              {t('auth.signIn')}
             </Link>
+            <LanguageSwitcher compact />
             <Link
               to="/register"
               className="px-4 py-2 bg-[#006e1c] text-white font-semibold text-sm rounded-lg hover:bg-[#005a17] transition-colors shadow-lg shadow-[#006e1c]/20 hover:shadow-[#006e1c]/30"
             >
-              Get Started
+              {t('landing.getStartedFree')}
             </Link>
           </div>
 
@@ -120,7 +124,7 @@ export default function LandingNavbar() {
                       : 'text-[#171d16] hover:bg-[#006e1c]/5 hover:text-[#006e1c]'
                   }`}
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </Link>
               ))}
               <div className="pt-4 border-t border-[#becab9]/30 space-y-2">
@@ -129,15 +133,16 @@ export default function LandingNavbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block w-full text-center px-4 py-3 text-[#006e1c] font-semibold rounded-lg border border-[#006e1c]/30 hover:bg-[#006e1c]/10 transition-colors"
                 >
-                  Sign In
+                  {t('auth.signIn')}
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block w-full text-center px-4 py-3 bg-[#006e1c] text-white font-semibold rounded-lg hover:bg-[#005a17] transition-colors"
                 >
-                  Get Started Free
+                  {t('landing.getStartedFree')}
                 </Link>
+                <LanguageSwitcher className="w-full" />
               </div>
             </div>
           </motion.div>
