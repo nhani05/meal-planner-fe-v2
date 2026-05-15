@@ -12,6 +12,14 @@ const mealIcons = {
   snack: '🍎',
 };
 
+const getPortionDishName = (portion) =>
+  portion.dishName ||
+  portion.dish_name ||
+  portion.dish?.name ||
+  portion.dish?.dishName ||
+  portion.dish?.dish_name ||
+  (portion.dishId ? `Dish #${portion.dishId}` : 'Unknown dish');
+
 export default function MealCard({
   mealType,
   portions = [],
@@ -100,7 +108,7 @@ export default function MealCard({
               }`}
             >
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-[#171d16] truncate">{p.dishName || `Dish #${p.dishId}`}</p>
+                <p className="text-xs font-bold text-[#171d16] truncate">{getPortionDishName(p)}</p>
                 <p className="text-[10px] text-[#6f7a6b]">{Math.round(p.caloriesKcal || 0)} kcal</p>
               </div>
 
