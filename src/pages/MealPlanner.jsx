@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useMealStore } from '../stores/mealStore';
 import { useUserStore } from '../stores/userStore';
 import { useUiStore } from '../stores/uiStore';
+import { useTranslation } from 'react-i18next';
 import { getMealPlanById } from '../api/mealApi';
 import PlanCreationModal from '../components/planner/PlanCreationModal';
 import TemplateListModal from '../components/planner/TemplateListModal';
@@ -43,6 +44,7 @@ function getWeekLabel(weekOffset) {
 }
 
 export default function MealPlanner() {
+  const { t } = useTranslation();
   const [weekOffset, setWeekOffset] = useState(0);
   const [viewMode, setViewMode] = useState('calendar'); // 'calendar' | 'detail'
   const [creationDate, setCreationDate] = useState(null);
@@ -198,8 +200,8 @@ export default function MealPlanner() {
   const handleUpdatePlan = useCallback(async () => {
     if (!accountId || !selectedDate) return;
     await loadDayDetail(accountId, selectedDate);
-    useUiStore.getState().showToast('Plan updated successfully', 'success');
-  }, [accountId, selectedDate, loadDayDetail]);
+    useUiStore.getState().showToast(t('toast.planUpdated'), 'success');
+  }, [accountId, selectedDate, loadDayDetail, t]);
 
   const handleSaveTemplate = useCallback(
     async (templateName) => {

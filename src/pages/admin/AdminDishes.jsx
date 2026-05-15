@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as adminApi from '../../api/adminApi';
 import * as dishApi from '../../api/dishApi';
 import { useUiStore } from '../../stores/uiStore';
+import i18n from '../../i18n';
 
 const difficulties = ['easy', 'medium', 'hard'];
 
@@ -62,10 +63,10 @@ function DishModal({ isOpen, onClose, dish, categories, onSave }) {
     try {
       if (dish?.id) {
         await adminApi.updateAdminDish(dish.id, form);
-        useUiStore.getState().showToast('Dish updated', 'success');
+        useUiStore.getState().showToast(i18n.t('toast.dishUpdated'), 'success');
       } else {
         await adminApi.createAdminDish(form);
-        useUiStore.getState().showToast('Dish created', 'success');
+        useUiStore.getState().showToast(i18n.t('toast.dishCreated'), 'success');
       }
       onSave();
       onClose();
@@ -219,7 +220,7 @@ export default function AdminDishes() {
     try {
       await adminApi.deleteAdminDish(id);
       setDishes((prev) => prev.filter((d) => d.id !== id));
-      useUiStore.getState().showToast('Dish deleted', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.dishDeleted'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Delete failed';
       useUiStore.getState().showToast(msg, 'error');

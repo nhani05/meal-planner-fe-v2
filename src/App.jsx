@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Toast from './components/common/Toast';
 import AdminRoute from './components/common/AdminRoute';
+import { useTranslation } from 'react-i18next';
 
 const Layout = lazy(() => import('./components/layout/Layout'));
 const AuthLayout = lazy(() => import('./components/auth/AuthLayout'));
@@ -31,9 +32,11 @@ const About = lazy(() => import('./pages/landing/About'));
 const Contact = lazy(() => import('./pages/landing/Contact'));
 
 function PageLoader() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5fbef] text-sm font-semibold text-[#006e1c]">
-      Loading...
+      {t('common.loading')}
     </div>
   );
 }

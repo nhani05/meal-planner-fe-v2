@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Leaf, Mail, MapPin, Phone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function FacebookIcon({ size = 18 }) {
   return (
@@ -31,18 +32,19 @@ function LinkedInIcon({ size = 18 }) {
 }
 
 export default function LandingFooter() {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     product: [
-      { label: 'Features', path: '/features' },
+      { label: t('nav.features'), path: '/features' },
       { label: 'Pricing', path: '#' },
-      { label: 'Templates', path: '#' },
-      { label: 'Recipes', path: '#' },
+      { label: t('nav.templates'), path: '#' },
+      { label: t('nav.recipes'), path: '#' },
     ],
     company: [
-      { label: 'About Us', path: '/about' },
-      { label: 'Contact', path: '/contact' },
+      { label: t('nav.about'), path: '/about' },
+      { label: t('nav.contact'), path: '/contact' },
       { label: 'Careers', path: '#' },
       { label: 'Blog', path: '#' },
     ],
@@ -84,7 +86,7 @@ export default function LandingFooter() {
               </div>
             </Link>
             <p className="text-[#a0a8a0] text-sm mb-6 max-w-xs">
-              Your personal nutrition assistant. Plan meals, track nutrition, and achieve your health goals with ease.
+              {t('landing.footerText')}
             </p>
             {/* Contact Info */}
             <div className="space-y-3">
@@ -98,14 +100,14 @@ export default function LandingFooter() {
               </a>
               <div className="flex items-center gap-2 text-sm text-[#a0a8a0]">
                 <MapPin size={16} />
-                123 Health Street, Wellness City
+                {t('landing.address')}
               </div>
             </div>
           </div>
 
           {/* Links Columns */}
           <div>
-            <h4 className="font-bold text-sm mb-4 text-white">Product</h4>
+            <h4 className="font-bold text-sm mb-4 text-white">{t('landing.footerProduct')}</h4>
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
                 <li key={link.label}>
@@ -118,7 +120,7 @@ export default function LandingFooter() {
           </div>
 
           <div>
-            <h4 className="font-bold text-sm mb-4 text-white">Company</h4>
+            <h4 className="font-bold text-sm mb-4 text-white">{t('landing.footerCompany')}</h4>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
@@ -131,7 +133,7 @@ export default function LandingFooter() {
           </div>
 
           <div>
-            <h4 className="font-bold text-sm mb-4 text-white">Resources</h4>
+            <h4 className="font-bold text-sm mb-4 text-white">{t('landing.footerResources')}</h4>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
@@ -144,7 +146,7 @@ export default function LandingFooter() {
           </div>
 
           <div>
-            <h4 className="font-bold text-sm mb-4 text-white">Legal</h4>
+            <h4 className="font-bold text-sm mb-4 text-white">{t('landing.footerLegal')}</h4>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
@@ -160,7 +162,7 @@ export default function LandingFooter() {
         {/* Bottom Bar */}
         <div className="py-6 border-t border-[#2c322a] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-[#a0a8a0]">
-            © {currentYear} NutriPlan. All rights reserved.
+            © {currentYear} NutriPlan. {t('landing.allRights')}
           </p>
           <div className="flex items-center gap-4">
             {socialLinks.map((social) => (

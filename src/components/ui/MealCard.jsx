@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Minus, Plus as PlusIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const mealIcons = {
   breakfast: '🌅',
@@ -18,7 +19,7 @@ const getPortionDishName = (portion) =>
   portion.dish?.name ||
   portion.dish?.dishName ||
   portion.dish?.dish_name ||
-  (portion.dishId ? `Dish #${portion.dishId}` : 'Unknown dish');
+  (portion.dishId ? `Dish #${portion.dishId}` : null);
 
 export default function MealCard({
   mealType,
@@ -29,6 +30,7 @@ export default function MealCard({
   isAdding,
   onValidationChange,
 }) {
+  const { t } = useTranslation();
   const [localQuantities, setLocalQuantities] = useState({});
   const [quantityErrors, setQuantityErrors] = useState({});
 
@@ -82,10 +84,10 @@ export default function MealCard({
           <span className="text-2xl">{mealIcons[mealType]}</span>
           <div>
             <p className="text-[10px] font-semibold text-[#6f7a6b] uppercase tracking-widest">
-              {mealType}
+              {t(`enums.mealType.${mealType}`)}
             </p>
             <p className="text-sm font-bold text-[#171d16]">
-              {portions.length > 0 ? `${portions.length} item${portions.length > 1 ? 's' : ''}` : 'Empty'}
+              {portions.length > 0 ? t('meals.items', { count: portions.length }) : t('meals.empty')}
             </p>
           </div>
         </div>
@@ -108,7 +110,7 @@ export default function MealCard({
               }`}
             >
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-[#171d16] truncate">{getPortionDishName(p)}</p>
+                <p className="text-xs font-bold text-[#171d16] truncate">{getPortionDishName(p) || t('meals.unknownDish')}</p>
                 <p className="text-[10px] text-[#6f7a6b]">{Math.round(p.caloriesKcal || 0)} kcal</p>
               </div>
 
@@ -154,7 +156,7 @@ export default function MealCard({
 
         {portions.length === 0 && (
           <div className="text-center py-4 text-[#6f7a6b]">
-            <p className="text-xs">No items yet</p>
+            <p className="text-xs">{t('meals.noItems')}</p>
           </div>
         )}
       </div>
@@ -163,9 +165,9 @@ export default function MealCard({
       {portions.length > 0 && (
         <div className="px-5 py-3 grid grid-cols-3 gap-2 border-t border-[#eaf0e4] bg-[#f5fbef]/30">
           {[
-            { label: 'Protein', value: totalProtein, color: '#4caf50' },
-            { label: 'Carbs', value: totalCarbs, color: '#33a0fd' },
-            { label: 'Fat', value: totalFat, color: '#f26f9d' },
+            { label: t('dashboard.protein'), value: totalProtein, color: '#4caf50' },
+            { label: t('dashboard.carbs'), value: totalCarbs, color: '#33a0fd' },
+            { label: t('dashboard.fat'), value: totalFat, color: '#f26f9d' },
           ].map(({ label, value, color }) => (
             <div key={label} className="text-center">
               <p className="text-sm font-bold" style={{ color }}>{Math.round(value)}g</p>
@@ -182,7 +184,7 @@ export default function MealCard({
           disabled={isAdding}
           className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border-2 border-dashed border-[#becab9] text-[#6f7a6b] hover:border-[#4caf50] hover:text-[#4caf50] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <Plus size={16} /> Add dish
+          <Plus size={16} /> {t('meals.addDish')}
         </button>
       </div>
     </div>

@@ -10,6 +10,7 @@ import {
 import { useAuthStore } from '../stores/authStore';
 import { useUserStore } from '../stores/userStore';
 import { useMealStore } from '../stores/mealStore';
+import { useTranslation } from 'react-i18next';
 
 const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -34,6 +35,7 @@ function getTodayStr() {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { healthGoal, isLoading: userLoading, fetchProfile, fetchGoal } = useUserStore();
   const {
@@ -54,10 +56,10 @@ export default function Dashboard() {
     }
   }, [accountId, fetchProfile, fetchGoal, loadTodayData, fetchWeekPlans]);
 
-  const username = user?.username || 'Guest';
+  const username = user?.username || t('topbar.guest');
   const goalLabel = healthGoal?.goalType
-    ? healthGoal.goalType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-    : 'Maintain';
+    ? t(`enums.goalType.${healthGoal.goalType}`)
+    : t('dashboard.maintain');
 
   const calories = {
     current: Math.round(dailyTotals.calories || 0),
@@ -151,10 +153,10 @@ export default function Dashboard() {
       >
         <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/10" />
         <div className="absolute -right-4 bottom-0 w-24 h-24 rounded-full bg-white/5" />
-        <p className="text-sm font-medium opacity-80 mb-1">Good morning,</p>
+        <p className="text-sm font-medium opacity-80 mb-1">{t('dashboard.goodMorning')}</p>
         <h2 className="text-2xl font-bold mb-1">{username} 👋</h2>
         <p className="text-sm opacity-80">
-          🔥 {streak}-day streak · {goalLabel} goal
+          🔥 {t('dashboard.streakGoal', { streak, goal: goalLabel })}
         </p>
         <div className="mt-4 flex items-center gap-3">
           <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
@@ -166,39 +168,39 @@ export default function Dashboard() {
             />
           </div>
           <span className="text-xs font-semibold opacity-90">
-            {calPct}% of daily goal
+            {t('dashboard.dailyGoalPct', { pct: calPct })}
           </span>
         </div>
       </motion.div>
 
       {/* Stat row */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Calories" value={`${calories.current}`} subtitle={`Target: ${calories.target}`} icon={Flame} trend={`${calPct}%`} trendUp={calPct >= 100} accent="#4caf50" />
-        <StatCard title="Protein" value={`${protein.current}g`} subtitle={`Target: ${protein.target}g`} icon={Zap} trend={`${proteinTrend}%`} trendUp={proteinTrend >= 100} accent="#006e1c" />
-        <StatCard title="Water" value={`${water.current} cups`} subtitle={`Target: ${water.target}`} icon={Droplets} trend={`${waterLeft} left`} trendUp={false} accent="#0061a4" />
-        <StatCard title="Active Streak" value={`${streak} days`} subtitle={streak > 0 ? 'Keep it up!' : 'Start your journey'} icon={Activity} trend={`${streak > 0 ? '+' : ''}${streak}`} trendUp={streak > 0} accent="#a63360" />
+        <StatCard title={t('dashboard.calories')} value={`${calories.current}`} subtitle={t('dashboard.target', { value: calories.target })} icon={Flame} trend={`${calPct}%`} trendUp={calPct >= 100} accent="#4caf50" />
+        <StatCard title={t('dashboard.protein')} value={`${protein.current}g`} subtitle={t('dashboard.target', { value: `${protein.target}g` })} icon={Zap} trend={`${proteinTrend}%`} trendUp={proteinTrend >= 100} accent="#006e1c" />
+        <StatCard title={t('dashboard.water')} value={`${water.current} ${t('dashboard.cups')}`} subtitle={t('dashboard.target', { value: water.target })} icon={Droplets} trend={t('dashboard.left', { value: waterLeft })} trendUp={false} accent="#0061a4" />
+        <StatCard title={t('dashboard.activeStreak')} value={`${streak} ${t('dashboard.days')}`} subtitle={streak > 0 ? t('dashboard.keepItUp') : t('dashboard.startJourney')} icon={Activity} trend={`${streak > 0 ? '+' : ''}${streak}`} trendUp={streak > 0} accent="#a63360" />
       </motion.div>
 
       {/* Main content grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calorie ring + macros */}
         <motion.div variants={itemVariants} className="bg-white rounded-2xl border border-[#becab9] shadow-card p-6 space-y-6">
-          <h3 className="font-bold text-[#171d16] text-sm">Today's Nutrition</h3>
+          <h3 className="font-bold text-[#171d16] text-sm">{t('dashboard.todaysNutrition')}</h3>
           <div className="flex justify-center py-2">
             <CalorieRing current={calories.current} target={calories.target} />
           </div>
           <div className="space-y-4">
-            <NutritionBar label="Protein" current={protein.current} target={protein.target} color="#4caf50" />
-            <NutritionBar label="Carbohydrates" current={carbs.current} target={carbs.target} color="#33a0fd" />
-            <NutritionBar label="Fat" current={fat.current} target={fat.target} color="#f26f9d" />
+            <NutritionBar label={t('dashboard.protein')} current={protein.current} target={protein.target} color="#4caf50" />
+            <NutritionBar label={t('dashboard.carbohydrates')} current={carbs.current} target={carbs.target} color="#33a0fd" />
+            <NutritionBar label={t('dashboard.fat')} current={fat.current} target={fat.target} color="#f26f9d" />
           </div>
         </motion.div>
 
         {/* Weekly bar chart */}
         <motion.div variants={itemVariants} className="lg:col-span-2 bg-white rounded-2xl border border-[#becab9] shadow-card p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-[#171d16] text-sm">Weekly Progress</h3>
-            <span className="text-[10px] font-bold text-[#006e1c] bg-[#eaf0e4] px-2.5 py-1 rounded-full uppercase tracking-wider">7-Day Trend</span>
+            <h3 className="font-bold text-[#171d16] text-sm">{t('dashboard.weeklyProgress')}</h3>
+            <span className="text-[10px] font-bold text-[#006e1c] bg-[#eaf0e4] px-2.5 py-1 rounded-full uppercase tracking-wider">{t('dashboard.sevenDayTrend')}</span>
           </div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={weeklyCalories} barSize={32}>
@@ -213,22 +215,22 @@ export default function Dashboard() {
             </BarChart>
           </ResponsiveContainer>
           <div className="mt-6 flex items-center gap-6 text-[10px] text-[#6f7a6b] font-medium border-t border-[#eaf0e4] pt-4">
-            <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-sm bg-[#4caf50]" />Today</span>
-            <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-sm bg-[#dee4d9]" />Other days</span>
-            <span className="ml-auto flex items-center gap-1.5"><TrendingUp size={12} /> Average: {avgWeekly} kcal</span>
+            <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-sm bg-[#4caf50]" />{t('dashboard.today')}</span>
+            <span className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-sm bg-[#dee4d9]" />{t('dashboard.otherDays')}</span>
+            <span className="ml-auto flex items-center gap-1.5"><TrendingUp size={12} /> {t('dashboard.average', { value: avgWeekly })}</span>
           </div>
         </motion.div>
       </div>
 
       {/* Quick actions */}
       <motion.div variants={itemVariants} className="bg-white rounded-2xl border border-[#becab9] shadow-card p-6">
-        <h3 className="font-bold text-[#171d16] text-sm mb-4">Quick Actions</h3>
+        <h3 className="font-bold text-[#171d16] text-sm mb-4">{t('dashboard.quickActions')}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: 'Log Meal', emoji: '🍽️', href: '/meals', color: '#eaf0e4' },
-            { label: 'Browse Recipes', emoji: '📖', href: '/recipes', color: '#d1e4ff' },
-            { label: 'Plan Week', emoji: '📅', href: '/planner', color: '#f0f6ea' },
-            { label: 'Settings', emoji: '⚙️', href: '/settings', color: '#dee4d9' },
+            { label: t('dashboard.logMeal'), emoji: '🍽️', href: '/meals', color: '#eaf0e4' },
+            { label: t('dashboard.browseRecipes'), emoji: '📖', href: '/recipes', color: '#d1e4ff' },
+            { label: t('dashboard.planWeek'), emoji: '📅', href: '/planner', color: '#f0f6ea' },
+            { label: t('nav.settings'), emoji: '⚙️', href: '/settings', color: '#dee4d9' },
           ].map(({ label, emoji, color }) => (
             <button
               key={label}

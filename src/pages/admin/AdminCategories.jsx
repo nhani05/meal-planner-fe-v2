@@ -3,6 +3,7 @@ import { Tag, Plus, Pencil, Trash2, Loader2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as dishApi from '../../api/dishApi';
 import { useUiStore } from '../../stores/uiStore';
+import i18n from '../../i18n';
 
 function CategoryModal({ isOpen, onClose, category, onSave }) {
   const [name, setName] = useState('');
@@ -23,10 +24,10 @@ function CategoryModal({ isOpen, onClose, category, onSave }) {
     try {
       if (category?.id) {
         await dishApi.updateCategory(category.id, name.trim());
-        useUiStore.getState().showToast('Category updated', 'success');
+        useUiStore.getState().showToast(i18n.t('toast.categoryUpdated'), 'success');
       } else {
         await dishApi.createCategory(name.trim());
-        useUiStore.getState().showToast('Category created', 'success');
+        useUiStore.getState().showToast(i18n.t('toast.categoryCreated'), 'success');
       }
       onSave();
       onClose();
@@ -104,7 +105,7 @@ export default function AdminCategories() {
     try {
       await dishApi.deleteCategory(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
-      useUiStore.getState().showToast('Category deleted', 'success');
+      useUiStore.getState().showToast(i18n.t('toast.categoryDeleted'), 'success');
     } catch (err) {
       const msg = err.response?.data?.message || err.message || 'Delete failed';
       useUiStore.getState().showToast(msg, 'error');

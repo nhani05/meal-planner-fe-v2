@@ -6,6 +6,7 @@ import NutritionBar from '../ui/NutritionBar';
 import AddFoodModal from './AddFoodModal';
 import SaveTemplateModal from './SaveTemplateModal';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
+import { useTranslation } from 'react-i18next';
 
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -28,6 +29,7 @@ export default function DayDetailView({
   onOverwriteTemplate,
   onUpdatePlan,
 }) {
+  const { i18n, t } = useTranslation();
   const [activeMealType, setActiveMealType] = useState(null);
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
   const [isSaveTemplateOpen, setIsSaveTemplateOpen] = useState(false);
@@ -45,7 +47,7 @@ export default function DayDetailView({
 
   const hasPortions = mealTypes.some((t) => (portions[t] || []).length > 0);
 
-  const formattedDate = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+  const formattedDate = new Date(date + 'T00:00:00').toLocaleDateString(i18n.resolvedLanguage === 'en' ? 'en-US' : 'vi-VN', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -82,7 +84,7 @@ export default function DayDetailView({
           <div>
             <h2 className="text-xl font-bold text-[#171d16]">{formattedDate}</h2>
             <p className="text-sm text-[#6f7a6b] font-medium">
-              {plan ? `Plan #${plan.id}` : 'No plan created yet'}
+              {plan ? t('planner.planNumber', { id: plan.id }) : t('planner.noPlanCreated')}
             </p>
           </div>
         </div>
@@ -96,7 +98,7 @@ export default function DayDetailView({
                   disabled={isAdding || hasAnyInvalid}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#4caf50] text-white text-xs font-bold transition-all shadow-sm shadow-[#4caf50]/20 hover:bg-[#006e1c] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  <RefreshCw size={14} /> Update Plan
+                  <RefreshCw size={14} /> {t('planner.updatePlan')}
                 </button>
               )}
               <button
@@ -104,14 +106,14 @@ export default function DayDetailView({
                 disabled={!hasPortions || isAdding}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#becab9] hover:bg-[#eaf0e4] text-[#3f4a3c] text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <Save size={14} /> Save as Template
+                <Save size={14} /> {t('planner.saveAsTemplate')}
               </button>
               <button
                 onClick={() => setIsDeleteOpen(true)}
                 disabled={isAdding}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#ba1a1a]/30 hover:bg-[#ffdad6] text-[#ba1a1a] text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <Trash2 size={14} /> Delete Plan
+                <Trash2 size={14} /> {t('planner.deletePlan')}
               </button>
             </>
           )}
@@ -125,7 +127,7 @@ export default function DayDetailView({
         className="bg-white rounded-2xl border border-[#becab9] shadow-card p-6"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-[#171d16]">Daily Nutrition</h3>
+          <h3 className="font-bold text-[#171d16]">{t('planner.dailyNutrition')}</h3>
           <p className="text-xs font-bold text-[#6f7a6b] uppercase">{Math.round(totals.calories)} / {targets.calories} kcal</p>
         </div>
         {isLoading ? (
@@ -134,11 +136,11 @@ export default function DayDetailView({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <NutritionBar label="Calories" current={totals.calories} target={targets.calories} color="#4caf50" unit=" kcal" />
+            <NutritionBar label={t('dashboard.calories')} current={totals.calories} target={targets.calories} color="#4caf50" unit=" kcal" />
             <div className="grid grid-cols-3 gap-4">
-              <NutritionBar label="Protein" current={totals.protein} target={targets.protein} color="#4caf50" />
-              <NutritionBar label="Carbs" current={totals.carbs} target={targets.carbs} color="#33a0fd" />
-              <NutritionBar label="Fat" current={totals.fat} target={targets.fat} color="#f26f9d" />
+              <NutritionBar label={t('dashboard.protein')} current={totals.protein} target={targets.protein} color="#4caf50" />
+              <NutritionBar label={t('dashboard.carbs')} current={totals.carbs} target={targets.carbs} color="#33a0fd" />
+              <NutritionBar label={t('dashboard.fat')} current={totals.fat} target={targets.fat} color="#f26f9d" />
             </div>
           </div>
         )}
@@ -172,13 +174,13 @@ export default function DayDetailView({
           <div className="w-16 h-16 rounded-full bg-[#eaf0e4] flex items-center justify-center mx-auto mb-4">
             <Plus size={32} className="text-[#006e1c]" />
           </div>
-          <h3 className="font-bold text-[#171d16] mb-1">No Plan Yet</h3>
-          <p className="text-sm text-[#6f7a6b] mb-4">Add dishes to any meal to create your plan for this day.</p>
+          <h3 className="font-bold text-[#171d16] mb-1">{t('planner.noPlanYet')}</h3>
+          <p className="text-sm text-[#6f7a6b] mb-4">{t('planner.noPlanText')}</p>
           <button
             onClick={() => handleOpenAddFood('breakfast')}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4caf50] text-white text-sm font-bold shadow-lg shadow-[#4caf50]/20 hover:bg-[#006e1c] transition-all active:scale-95"
           >
-            <Plus size={18} /> Start with Breakfast
+            <Plus size={18} /> {t('planner.startBreakfast')}
           </button>
         </div>
       )}
@@ -203,8 +205,8 @@ export default function DayDetailView({
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         onConfirm={onDeletePlan}
-        title="Delete Plan"
-        message="Are you sure you want to delete this meal plan? This action cannot be undone."
+        title={t('planner.deletePlan')}
+        message={t('planner.deletePlanMessage')}
       />
     </motion.div>
   );

@@ -1,31 +1,34 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
-import { registerSchema } from '../../utils/validators';
+import { useTranslation } from 'react-i18next';
+import { createRegisterSchema } from '../../utils/validators';
 import { register as registerApi } from '../../api/authApi';
 import { useUiStore } from '../../stores/uiStore';
 
 export default function Register() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const showToast = useUiStore((state) => state.showToast);
+  const schema = useMemo(() => createRegisterSchema(t), [t]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(registerSchema) });
+  } = useForm({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       await registerApi(data);
-      showToast('Registration successful! Please sign in.', 'success');
+      showToast(t('toast.registerSuccess'), 'success');
       navigate('/login');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || 'Registration failed';
+      const msg = err.response?.data?.message || err.message || t('toast.loginFailed');
       showToast(msg, 'error');
     } finally {
       setLoading(false);
@@ -34,16 +37,16 @@ export default function Register() {
 
   return (
     <div className="bg-white rounded-2xl border border-[#becab9] shadow-card p-8">
-      <h2 className="text-xl font-bold text-[#171d16] mb-1">Create account</h2>
-      <p className="text-sm text-[#6f7a6b] mb-6">Start your personalized nutrition journey</p>
+      <h2 className="text-xl font-bold text-[#171d16] mb-1">{t('auth.createAccount')}</h2>
+      <p className="text-sm text-[#6f7a6b] mb-6">{t('auth.registerSubtitle')}</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">Username</label>
+          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">{t('auth.username')}</label>
           <input
             {...register('username')}
             type="text"
-            placeholder="Choose a username"
+            placeholder={t('auth.enterUsername')}
             className="w-full px-4 py-3 rounded-xl border border-[#becab9] text-sm text-[#171d16] focus:outline-none focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 transition-all"
           />
           {errors.username && (
@@ -52,11 +55,11 @@ export default function Register() {
         </div>
 
         <div>
-          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">Email</label>
+          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">{t('auth.email')}</label>
           <input
             {...register('email')}
             type="email"
-            placeholder="Enter your email"
+            placeholder={t('auth.enterEmail')}
             className="w-full px-4 py-3 rounded-xl border border-[#becab9] text-sm text-[#171d16] focus:outline-none focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 transition-all"
           />
           {errors.email && (
@@ -65,11 +68,11 @@ export default function Register() {
         </div>
 
         <div>
-          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">Password</label>
+          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">{t('auth.password')}</label>
           <input
             {...register('password')}
             type="password"
-            placeholder="Create a password"
+            placeholder={t('auth.enterPassword')}
             className="w-full px-4 py-3 rounded-xl border border-[#becab9] text-sm text-[#171d16] focus:outline-none focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 transition-all"
           />
           {errors.password && (
@@ -78,11 +81,11 @@ export default function Register() {
         </div>
 
         <div>
-          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">Confirm Password</label>
+          <label className="text-xs font-bold text-[#3f4a3c] uppercase tracking-wider mb-1 block">{t('auth.confirmPassword')}</label>
           <input
             {...register('passwordConfirm')}
             type="password"
-            placeholder="Confirm your password"
+            placeholder={t('auth.confirmPassword')}
             className="w-full px-4 py-3 rounded-xl border border-[#becab9] text-sm text-[#171d16] focus:outline-none focus:border-[#4caf50] focus:ring-2 focus:ring-[#4caf50]/20 transition-all"
           />
           {errors.passwordConfirm && (
@@ -96,15 +99,15 @@ export default function Register() {
           className="w-full flex items-center justify-center gap-2 bg-[#4caf50] hover:bg-[#006e1c] text-white font-bold py-3 rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <UserPlus size={18} />
-          {loading ? 'Creating account...' : 'Create Account'}
+          {loading ? `${t('auth.createAccount')}...` : t('auth.createAccount')}
         </button>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-sm text-[#6f7a6b]">
-          Already have an account?{' '}
+          {t('auth.alreadyHaveAccount')}{' '}
           <Link to="/login" className="font-bold text-[#006e1c] hover:text-[#4caf50] transition-colors">
-            Sign in
+            {t('auth.signIn')}
           </Link>
         </p>
       </div>

@@ -7,6 +7,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useUserStore } from '../stores/userStore';
 import { useMealStore } from '../stores/mealStore';
+import { useTranslation } from 'react-i18next';
 
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -18,6 +19,7 @@ function formatDateLocal(d) {
 }
 
 export default function TodaysMeals() {
+  const { i18n, t } = useTranslation();
   const user = useAuthStore((state) => state.user);
   const accountId = user?.id;
 
@@ -95,14 +97,14 @@ export default function TodaysMeals() {
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-xl font-bold text-[#171d16]">Daily Progress</h2>
+            <h2 className="text-xl font-bold text-[#171d16]">{t('meals.dailyProgress')}</h2>
             <p className="text-xs text-[#6f7a6b] mt-1">
-              Tracking your intake for <strong>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</strong>
+              {t('meals.trackingDate')} <strong>{new Date().toLocaleDateString(i18n.resolvedLanguage === 'en' ? 'en-US' : 'vi-VN', { month: 'long', day: 'numeric' })}</strong>
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <p className="text-xs font-semibold text-[#6f7a6b] uppercase">Remaining</p>
+              <p className="text-xs font-semibold text-[#6f7a6b] uppercase">{t('meals.remaining')}</p>
               <p className="text-lg font-bold text-[#006e1c]">{Math.round(remainingCals)} kcal</p>
             </div>
             <button
@@ -110,7 +112,7 @@ export default function TodaysMeals() {
               disabled={isAdding}
               className="flex items-center gap-2 bg-[#4caf50] hover:bg-[#006e1c] disabled:bg-[#becab9] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-[#4caf50]/20 transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <Plus size={18} /> Log a Meal
+              <Plus size={18} /> {t('meals.logMeal')}
             </button>
           </div>
         </div>
@@ -121,11 +123,11 @@ export default function TodaysMeals() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <NutritionBar label="Total Calories" current={dailyTotals.calories} target={targets.calories} color="#4caf50" unit=" kcal" />
+            <NutritionBar label={t('meals.totalCalories')} current={dailyTotals.calories} target={targets.calories} color="#4caf50" unit=" kcal" />
             <div className="grid grid-cols-3 gap-4">
-              <NutritionBar label="Protein" current={dailyTotals.protein} target={targets.protein} color="#4caf50" />
-              <NutritionBar label="Carbs" current={dailyTotals.carbs} target={targets.carbs} color="#33a0fd" />
-              <NutritionBar label="Fat" current={dailyTotals.fat} target={targets.fat} color="#f26f9d" />
+              <NutritionBar label={t('dashboard.protein')} current={dailyTotals.protein} target={targets.protein} color="#4caf50" />
+              <NutritionBar label={t('dashboard.carbs')} current={dailyTotals.carbs} target={targets.carbs} color="#33a0fd" />
+              <NutritionBar label={t('dashboard.fat')} current={dailyTotals.fat} target={targets.fat} color="#f26f9d" />
             </div>
           </div>
         )}
@@ -164,13 +166,13 @@ export default function TodaysMeals() {
               <Droplets size={22} />
             </div>
             <div>
-              <h3 className="font-bold text-[#171d16]">Hydration Tracker</h3>
-              <p className="text-xs text-[#6f7a6b]">Target: {targets.water} cups per day</p>
+              <h3 className="font-bold text-[#171d16]">{t('meals.hydrationTracker')}</h3>
+              <p className="text-xs text-[#6f7a6b]">{t('meals.waterTarget', { count: targets.water })}</p>
             </div>
           </div>
           <div className="text-right">
             <p className="text-xl font-bold text-[#0061a4]">{waterCurrent} / {targets.water}</p>
-            <p className="text-[10px] font-bold text-[#6f7a6b] uppercase">Cups</p>
+            <p className="text-[10px] font-bold text-[#6f7a6b] uppercase">{t('meals.cups')}</p>
           </div>
         </div>
 
@@ -184,14 +186,14 @@ export default function TodaysMeals() {
                   ? 'bg-[#33a0fd] border-[#33a0fd] text-white shadow-md'
                   : 'bg-[#f0f6ea] border-transparent text-[#6f7a6b] hover:border-[#33a0fd]/30'
               }`}
-              aria-label={`Cup ${i + 1}`}
+              aria-label={t('meals.cupLabel', { count: i + 1 })}
             >
               <Droplets size={16} fill={i < waterCurrent ? "currentColor" : "none"} />
             </button>
           ))}
           <button
             className="w-10 h-12 rounded-xl border-2 border-dashed border-[#becab9] flex items-center justify-center text-[#6f7a6b] hover:border-[#4caf50] hover:text-[#4caf50] transition-colors"
-            title="Add goal"
+            title={t('meals.addGoal')}
           >
             <Plus size={16} />
           </button>
@@ -200,7 +202,7 @@ export default function TodaysMeals() {
         <div className="mt-6 p-3 rounded-lg bg-[#eaf0e4]/50 flex items-start gap-3">
           <Info size={14} className="text-[#006e1c] mt-0.5 shrink-0" />
           <p className="text-[11px] text-[#3f4a3c] leading-relaxed">
-            Drinking enough water boosts metabolism and helps with digestion. You are <strong>{Math.round((waterCurrent / targets.water) * 100)}%</strong> of the way there!
+            {t('meals.hydrationTip', { pct: Math.round((waterCurrent / targets.water) * 100) })}
           </p>
         </div>
       </motion.div>

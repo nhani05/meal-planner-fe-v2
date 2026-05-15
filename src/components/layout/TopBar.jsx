@@ -2,19 +2,23 @@ import { Bell, Search, Calendar } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../stores/authStore';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 const titles = {
-  '/dashboard': 'Dashboard',
-  '/meals': "Today's Intake",
-  '/planner': 'Weekly Planner',
-  '/recipes': 'Recipe Discovery',
-  '/analytics': 'Performance Analytics',
-  '/settings': 'Account Settings',
+  '/dashboard': 'nav.dashboard',
+  '/meals': 'topbar.todaysIntake',
+  '/planner': 'topbar.weeklyPlanner',
+  '/recipes': 'topbar.recipeDiscovery',
+  '/templates': 'nav.templates',
+  '/analytics': 'topbar.performanceAnalytics',
+  '/settings': 'topbar.accountSettings',
 };
 
 export default function TopBar() {
+  const { i18n, t } = useTranslation();
   const { pathname } = useLocation();
-  const title = titles[pathname] ?? 'NutriPlan';
+  const title = t(titles[pathname] ?? 'NutriPlan');
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -30,7 +34,7 @@ export default function TopBar() {
           <div className="flex items-center gap-1.5 mt-0.5">
             <Calendar size={12} className="text-[#006e1c]" />
             <p className="text-[11px] font-bold text-[#6f7a6b] uppercase tracking-wider">
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+              {new Date().toLocaleDateString(i18n.resolvedLanguage === 'en' ? 'en-US' : 'vi-VN', { weekday: 'long', month: 'short', day: 'numeric' })}
             </p>
           </div>
         </motion.div>
@@ -39,7 +43,7 @@ export default function TopBar() {
       {/* Search */}
       <div className="hidden lg:flex items-center gap-3 bg-[#f5fbef] border border-[#becab9]/30 rounded-xl px-4 py-2 text-sm text-[#6f7a6b] w-64 hover:bg-white hover:border-[#4caf50]/50 hover:shadow-sm transition-all cursor-text group">
         <Search size={16} className="group-hover:text-[#4caf50] transition-colors" />
-        <span className="font-medium">Search anything...</span>
+        <span className="font-medium">{t('topbar.searchPlaceholder')}</span>
         <kbd className="ml-auto hidden xl:inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-[#becab9]/50 bg-white text-[10px] font-bold text-[#becab9]">
           ⌘K
         </kbd>
@@ -49,7 +53,7 @@ export default function TopBar() {
         {/* Notifications */}
         <button
           className="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-[#becab9]/30 hover:bg-[#eaf0e4] hover:border-[#4caf50]/50 text-[#3f4a3c] transition-all group shadow-sm active:scale-95"
-          aria-label="Notifications"
+          aria-label={t('topbar.notifications')}
         >
           <Bell size={20} className="group-hover:rotate-12 transition-transform" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#a63360] ring-2 ring-white" />
@@ -61,10 +65,11 @@ export default function TopBar() {
             {user?.username ? user.username.slice(0, 2).toUpperCase() : 'GU'}
           </div>
           <div className="text-left hidden sm:block">
-            <p className="text-[11px] font-bold text-[#171d16] leading-none">{user?.username || 'Guest'}</p>
-            <p className="text-[9px] font-bold text-[#006e1c] uppercase tracking-tighter">{user?.role === 'admin' ? 'Admin' : 'Pro Plan'}</p>
+            <p className="text-[11px] font-bold text-[#171d16] leading-none">{user?.username || t('topbar.guest')}</p>
+            <p className="text-[9px] font-bold text-[#006e1c] uppercase tracking-tighter">{user?.role === 'admin' ? t('nav.admin') : t('topbar.proPlan')}</p>
           </div>
         </button>
+        <LanguageSwitcher compact className="hidden sm:inline-flex" />
       </div>
     </header>
   );
