@@ -1,10 +1,65 @@
 import { create } from 'zustand';
 import * as mealApi from '../api/mealApi';
+import * as dishApi from '../api/dishApi';
 import { useUiStore } from './uiStore';
 
 const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack'];
+const dishNameCache = new Map();
 
 const emptyPortions = () => ({ breakfast: [], lunch: [], dinner: [], snack: [] });
+
+const pickNumber = (...values) => {
+  const value = values.find((v) => v !== undefined && v !== null);
+  const num = Number(value);
+  return Number.isFinite(num) ? num : 0;
+};
+
+const getDishId = (portion) =>
+  portion.dishId ?? portion.dish_id ?? portion.dish?.id ?? portion.dish?.dishId ?? null;
+
+const getDishName = (portion) =>
+  portion.dishName ??
+  portion.dish_name ??
+  portion.dish?.name ??
+  portion.dish?.dishName ??
+  portion.dish?.dish_name ??
+  null;
+
+const normalizePortion = (portion, dishName) => ({
+  ...portion,
+  id: portion.id ?? portion.portionId ?? portion.mealPortionId,
+  dishId: getDishId(portion),
+  dishName: dishName ?? getDishName(portion),
+  quantityG: pickNumber(portion.quantityG, portion.quantity_g, portion.grams),
+  caloriesKcal: pickNumber(portion.caloriesKcal, portion.calories_kcal, portion.calories),
+  proteinG: pickNumber(portion.proteinG, portion.protein_g, portion.protein),
+  carbG: pickNumber(portion.carbG, portion.carbsG, portion.carb_g, portion.carbs_g, portion.carbs),
+  fatG: pickNumber(portion.fatG, portion.fat_g, portion.fat),
+});
+
+const enrichPortions = async (rawPortions = []) => {
+  const portions = Array.isArray(rawPortions) ? rawPortions : [];
+  const missingIds = [
+    ...new Set(
+      portions
+        .filter((p) => !getDishName(p))
+        .map(getDishId)
+        .filter((id) => id !== null && id !== undefined && !dishNameCache.has(id))
+    ),
+  ];
+
+  await Promise.allSettled(
+    missingIds.map(async (id) => {
+      const res = await dishApi.getDishById(id);
+      dishNameCache.set(id, res.data?.name || null);
+    })
+  );
+
+  return portions.map((p) => {
+    const dishId = getDishId(p);
+    return normalizePortion(p, getDishName(p) || dishNameCache.get(dishId));
+  });
+};
 
 const calcTotals = (portions) => {
   let calories = 0, protein = 0, carbs = 0, fat = 0;
@@ -91,7 +146,8 @@ export const useMealStore = create((set, get) => ({
             );
             let calories = 0, protein = 0, carbs = 0, fat = 0;
             for (const res of portionsRes) {
-              for (const p of res.data || []) {
+              const normalized = await enrichPortions(res.data || []);
+              for (const p of normalized) {
                 calories += p.caloriesKcal || 0;
                 protein += p.proteinG || 0;
                 carbs += p.carbG || 0;
@@ -190,8 +246,9 @@ export const useMealStore = create((set, get) => ({
   fetchPortions: async (planId, mealType) => {
     try {
       const res = await mealApi.getPortions(planId, mealType);
+      const portions = await enrichPortions(res.data || []);
       set((state) => ({
-        portions: { ...state.portions, [mealType]: res.data || [] },
+        portions: { ...state.portions, [mealType]: portions },
       }));
     } catch (err) {
       const msg = err.response?.data?.message || err.message || `Failed to load ${mealType} portions`;
@@ -244,8 +301,9 @@ export const useMealStore = create((set, get) => ({
   _fetchDayPortions: async (planId, mealType) => {
     try {
       const res = await mealApi.getPortions(planId, mealType);
+      const portions = await enrichPortions(res.data || []);
       set((state) => ({
-        dayPortions: { ...state.dayPortions, [mealType]: res.data || [] },
+        dayPortions: { ...state.dayPortions, [mealType]: portions },
       }));
     } catch (err) {
       const msg = err.response?.data?.message || err.message || `Failed to load ${mealType} portions`;
